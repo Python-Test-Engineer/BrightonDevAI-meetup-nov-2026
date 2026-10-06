@@ -74,7 +74,8 @@
 
       // Send message to OpenRouter
       async function sendMessage(userMessage) {
-         // Use the key typed into the field, falling back to the config.js key.
+         await window.openRouterReady; // key + model come from OPENROUTER.txt
+         // Use the key typed into the field, falling back to the key from OPENROUTER.txt.
          const apiKey = document.getElementById('apiKey').value || OPENROUTER_API_KEY;
 
          if (!apiKey) {

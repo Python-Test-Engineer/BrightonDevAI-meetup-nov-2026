@@ -21,7 +21,7 @@ s
 
 ## Who am I?
 
-**I am one of *US* - a Data /Agentic Engibneersfsd.** (I will use Data Engineer as a catch all description).
+**I am one of *US* - a Data /Agentic EnEngineer.** (I will use Data Engineer as a catch all description).
 
 Wrestling and getting to grips with these new technologies.
 

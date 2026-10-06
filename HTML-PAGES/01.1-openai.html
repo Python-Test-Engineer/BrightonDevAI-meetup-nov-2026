@@ -34,7 +34,8 @@
       }
 
       document.getElementById('sendBtn').addEventListener('click', async () => {
-         // Use the key typed into the field, falling back to the config.js key.
+         await window.openRouterReady; // key + model come from OPENROUTER.txt
+         // Use the key typed into the field, falling back to the key from OPENROUTER.txt.
          const apiKey = document.getElementById('apiKey').value || OPENROUTER_API_KEY;
          const prompt = document.getElementById('prompt').value;
          const resultDiv = document.getElementById('result');
@@ -76,18 +77,20 @@
             });
 
             const data = await response.json();
+            console.log('API Response:', data);
 
             // ******************** AI BIT ********************
 
             // NB No mememory every call is stateless
-            const msg = data.choices[0].message.content; // We can drill down for the content of the first message choice to get the 'answer'.
-            console.log('API Response:', data);
-
             let output = "";
 
             if (data.error) {
+               // OpenRouter error responses (bad key, bad model, rate limit...) have NO `choices`.
                resultDiv.innerHTML = `<p style="color: red;">Error: ${data.error.message}</p>`;
+            } else if (!data.choices || !data.choices[0]) {
+               resultDiv.innerHTML = `<p style="color: red;">Unexpected response from OpenRouter (no choices). Check the console.</p>`;
             } else {
+               const msg = data.choices[0].message.content; // We can drill down for the content of the first message choice to get the 'answer'.
                resultDiv.innerHTML = `<p><strong>Response:</strong></p><p>${output + '<br>' + msg}</p>`;
             }
          } catch (error) {
