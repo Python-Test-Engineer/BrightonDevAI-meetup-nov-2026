@@ -2,7 +2,7 @@
 
 ## HTML-PAGES
 
-This has the HMTL pages with API requests to OpenAI
+This has the HMTL pages with API requests to OPENROUTER
 
 ## HTML-EXPLAINERS
 
