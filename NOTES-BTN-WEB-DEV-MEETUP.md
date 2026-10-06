@@ -79,7 +79,7 @@ What if AI Agents were 'just' code with a REST API call, admittedly a very magic
 This snippet of code is the most important takeway tonight...to be explained
 </div>
 
-We can tghen create the HARNESS around this.
+We can then create the HARNESS around this.
 Business as usual.
 
 This is the main focus of the talk - **demystify and simplify** - and this will enable you to create AI Agents and also construct workflows using AI Agents.
