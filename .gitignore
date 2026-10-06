@@ -1,2 +1,4 @@
 .env
 OPENROUTER.txt
+mini-coding-agent/.venv
+**/.venv    
