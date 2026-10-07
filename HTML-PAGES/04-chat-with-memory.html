@@ -29,9 +29,18 @@
    </div>
 
    <script>
+      // 🚀 ======================= DEMO CONSOLE LOGGING =======================
+      console.log('%c🚀 04 — Chat with Memory (stateful conversation)', 'font-size:15px;font-weight:bold;color:#0b7a5c');
+      console.log('📄 Page loaded. The API is stateless — so WE keep the whole conversation and resend it every time.');
+      console.log('🧠 That is what "memory" means here: the full message history is echoed back on each request.');
+      console.log('💾 We also persist it to localStorage, so a page refresh keeps the chat.');
+
       // Pre-fill the API key from config.js (OpenRouter) so the demo works out of the box.
       if (typeof OPENROUTER_API_KEY !== 'undefined' && OPENROUTER_API_KEY) {
          document.getElementById('apiKey').value = OPENROUTER_API_KEY;
+         console.log('🔑 API key auto-filled from config.js (OpenRouter).');
+      } else {
+         console.warn('⚠️ No OPENROUTER_API_KEY found in config.js — type one into the field.');
       }
 
       const systemPrompt = `
@@ -49,8 +58,12 @@
       // Load messages from localStorage
       function loadMessages() {
          const saved = localStorage.getItem('chatHistory');
+         console.log('💾 Looking for saved chat in localStorage...');
          if (saved) {
             messages = JSON.parse(saved);
+            console.log('📥 Restored', messages.length, 'messages from localStorage (memory survives refresh!).');
+         } else {
+            console.log('🆕 No saved chat yet — starting from the system prompt only.');
          }
          renderMessages();
       }
@@ -58,12 +71,14 @@
       // Save messages to localStorage
       function saveMessages() {
          localStorage.setItem('chatHistory', JSON.stringify(messages));
+         console.log('💾 Saved', messages.length, 'messages to localStorage key "chatHistory".');
       }
 
       // Render messages to the chat
       function renderMessages() {
          const messagesDiv = document.getElementById('messages');
          messagesDiv.innerHTML = '';
+         console.log('🖼️ Rendering', messages.length - 1, 'visible messages (the system prompt is hidden from the UI).');
          messages.slice(1).forEach(msg => { // Skip system message
             const msgDiv = document.createElement('div');
             msgDiv.className = `message ${msg.role}`;
@@ -74,16 +89,22 @@
 
       // Send message to OpenRouter
       async function sendMessage(userMessage) {
+         console.group('%c📨 sendMessage() called', 'color:#0b7a5c;font-weight:bold');
+         console.log('⏳ Awaiting window.openRouterReady (loads key + model from OPENROUTER.txt).');
          await window.openRouterReady; // key + model come from OPENROUTER.txt
+         console.log('✅ openRouterReady resolved.');
          // Use the key typed into the field, falling back to the key from OPENROUTER.txt.
          const apiKey = document.getElementById('apiKey').value || OPENROUTER_API_KEY;
 
          if (!apiKey) {
+            console.warn('🛑 No API key — aborting.');
+            console.groupEnd();
             alert('Please enter your API key');
             return;
          }
 
          // Add user message
+         console.log('➕ Pushing the user message onto the history:', JSON.stringify(userMessage));
          messages.push({ role: 'user', content: userMessage });
          saveMessages();
          renderMessages();
@@ -96,6 +117,7 @@
          loadingDiv.className = 'message assistant loading';
          loadingDiv.textContent = 'Thinking...';
          document.getElementById('messages').appendChild(loadingDiv);
+         console.log('⌛ Added a temporary "Thinking..." bubble (it is removed when the reply arrives).');
 
          // Scroll to bottom
          document.getElementById('chatContainer').scrollTop = document.getElementById('chatContainer').scrollHeight;
@@ -103,8 +125,11 @@
          // Log conversation history being sent
          console.log('Sending to OpenRouter - Total messages in conversation:', messages.length);
          console.log('Full conversation history:', messages);
+         console.log('🔑 This is the KEY idea: we resend the ENTIRE history every call. More history = more tokens = more cost.');
 
          try {
+            console.log('🌐 POSTing to', OPENROUTER_API_URL, '| model:', OPENROUTER_MODEL);
+            const t0 = performance.now();
             const response = await fetch(OPENROUTER_API_URL, {
                method: 'POST',
                headers: {
@@ -118,31 +143,39 @@
                   max_tokens: 1024
                })
             });
+            console.log('📡 Response in', Math.round(performance.now() - t0) + 'ms | status', response.status, response.ok ? '✅' : '⚠️');
 
             const data = await response.json();
+            console.log('Raw API response:', data);
 
             if (data.error) {
+               console.error('❌ OpenRouter error:', data.error.message);
                loadingDiv.textContent = `Error: ${data.error.message}`;
                loadingDiv.style.color = 'red';
             } else {
                // Remove loading message
                document.getElementById('messages').removeChild(loadingDiv);
+               console.log('🧹 Removed the "Thinking..." bubble.');
 
                // Add actual response
                const assistantMessage = data.choices[0].message.content;
+               console.log('💬 Assistant replied:', assistantMessage);
                messages.push({ role: 'assistant', content: assistantMessage });
                saveMessages();
                renderMessages();
 
                console.log('Assistant response added. Total messages now:', messages.length);
+               if (data.usage) console.log('🧮 Token usage:', data.usage, '(grows as the history grows!)');
 
                // Scroll to bottom
                document.getElementById('chatContainer').scrollTop = document.getElementById('chatContainer').scrollHeight;
             }
          } catch (error) {
+            console.error('💥 Network/parse error:', error);
             loadingDiv.textContent = `Error: ${error.message}`;
             loadingDiv.style.color = 'red';
          }
+         console.groupEnd();
       }
 
       // Event listener for send button
@@ -150,28 +183,37 @@
          const input = document.getElementById('messageInput');
          const message = input.value.trim();
          if (message) {
+            console.log('👆 Send button clicked with:', JSON.stringify(message));
             sendMessage(message);
+         } else {
+            console.warn('🙈 Send clicked but the input was empty — ignoring.');
          }
       });
 
       // Allow enter key to send
       document.getElementById('messageInput').addEventListener('keypress', (e) => {
          if (e.key === 'Enter') {
+            console.log('⌨️ Enter key pressed — sending.');
             sendMessage(e.target.value.trim());
          }
       });
 
       // Clear chat functionality
       document.getElementById('clearBtn').addEventListener('click', () => {
+         console.log('🗑️ Clear Chat clicked.');
          if (confirm('Are you sure you want to clear the chat history?')) {
             messages = [{ role: 'system', content: systemPrompt }];
             saveMessages();
             renderMessages();
+            console.log('✅ Chat history wiped — memory reset to just the system prompt.');
+         } else {
+            console.log('↩️ Clear cancelled — history kept.');
          }
       });
 
       // Load messages on page load
       window.addEventListener('load', loadMessages);
+      console.log('🪝 Registered loadMessages() to run on window "load".');
 
       // Debug: Log messages array before each API call
       console.log('Chat initialized. Messages array:', messages);

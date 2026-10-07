@@ -27,35 +27,74 @@
    <div id="result"></div>
 
    <script>
+      // 🚀 ======================= DEMO CONSOLE LOGGING =======================
+      // 👋 Welcome! Every console.log below is here to explain, step by step,
+      //    what this page is doing while it runs. Open your DevTools console.
+      console.log('%c🚀 01.1 — OpenRouter API in Browser (the most basic call)', 'font-size:15px;font-weight:bold;color:#0b7a5c');
+      console.log('📄 Page loaded. This demo sends ONE prompt to an LLM and prints the answer.');
+      console.log('🧠 Note: this call is STATELESS — the model has no memory between clicks.');
+      console.log('🔁 Each click below is a completely fresh conversation as far as the AI is concerned.');
 
       // Pre-fill the API key from config.js (OpenRouter) so the demo works out of the box.
       if (typeof OPENROUTER_API_KEY !== 'undefined' && OPENROUTER_API_KEY) {
          document.getElementById('apiKey').value = OPENROUTER_API_KEY;
+         console.log('🔑 API key auto-filled from config.js (OpenRouter).');
+      } else {
+         console.warn('⚠️ No OPENROUTER_API_KEY found in config.js — type one into the field before sending.');
       }
+      console.log('🤖 Model that will be used:', (typeof OPENROUTER_MODEL !== 'undefined' ? OPENROUTER_MODEL : '(not loaded yet)'));
+      console.log('🌐 Endpoint that will be called:', (typeof OPENROUTER_API_URL !== 'undefined' ? OPENROUTER_API_URL : '(not loaded yet)'));
 
       document.getElementById('sendBtn').addEventListener('click', async () => {
+         console.log('%c👆 Send button clicked', 'color:#0b7a5c;font-weight:bold');
+         console.log('⏳ Awaiting window.openRouterReady — this promise resolves once the key + model are read from OPENROUTER.txt.');
          await window.openRouterReady; // key + model come from OPENROUTER.txt
+         console.log('✅ openRouterReady resolved — config is available.');
          // Use the key typed into the field, falling back to the key from OPENROUTER.txt.
          const apiKey = document.getElementById('apiKey').value || OPENROUTER_API_KEY;
          const prompt = document.getElementById('prompt').value;
          const resultDiv = document.getElementById('result');
 
+         console.log('📝 User prompt:', JSON.stringify(prompt));
+         console.log('🔑 Using API key:', apiKey ? apiKey.slice(0, 8) + '…(hidden)' : '(none)');
+
 
          if (!apiKey) {
+            console.warn('🛑 No API key available — aborting the request.');
             resultDiv.innerHTML = '<p style="color: red;">Please enter your API key</p>';
             return;
          }
 
          resultDiv.innerHTML = '<p>Loading...</p>';
+         console.log('⌛ Showing "Loading..." while we wait for the model.');
+
          system_prompt = `
          You are a helpful assistant. You always answer in a concise manner. 
 
          You never refuse to answer but do not make things up - just say 'I don't know'. You always try to help the user as much as possible. 
 
          Convert markdown to HTML when needed so that ouput is properly formatted. Ensure there is a new line after each sentence.`;
+         console.group('🧭 System prompt (the AI\'s "personality" + rules)');
+         console.log(system_prompt);
+         console.groupEnd();
 
          // ******************** AI BIT ********************
          try {
+            // 📦 This array is the "conversation" we send. Chat models are trained on
+            //    role-tagged messages: 'system' = instructions, 'user' = the question.
+            const requestMessages = [
+               { role: 'system', content: system_prompt }, // Defines how the AI agent should behave (its "personality" and rules).
+               { role: 'user', content: prompt } // The user's input/query for the agent to respond to.
+            ];
+            console.group('📤 Building the request');
+            console.log('Roles matter! Models understand "system" (rules) and "user" (question).');
+            console.log('Messages being sent:', requestMessages);
+            console.log('⚙️ max_tokens: 1024  (caps how long the answer can be; ~1 token ≈ 4 characters)');
+            console.log('🎲 temperature: 0.7  (0 = deterministic, 2 = wild; 0.7 is a natural balance)');
+            console.groupEnd();
+
+            console.log('🌐 Sending POST to', OPENROUTER_API_URL, '…');
+            const t0 = performance.now();
             const response = await fetch(OPENROUTER_API_URL, {
                method: 'POST',
                headers: {
@@ -65,16 +104,15 @@
                },
                body: JSON.stringify({
                   model: OPENROUTER_MODEL, // OpenRouter model id (from OPENROUTER.txt, e.g. 'deepseek-v4.1-flash').
-                  messages: [
-                     { role: 'system', content: system_prompt }, // Defines how the AI agent should behave (its "personality" and rules).
-                     { role: 'user', content: prompt } // The user's input/query for the agent to respond to.
-                  ], // Models are trained to understand these roles to generate appropriate responses so we use the same format.
+                  messages: requestMessages, // Models are trained to understand these roles to generate appropriate responses so we use the same format.
 
                   max_tokens: 1024, // Limits the response length to prevent excessive output. A token in LLM (Large Language Model) terminology is the basic unit of text that the model processes. Think of it as the fundamental "chunk" that the AI reads and generates. You can typically estimate roughly 1 token ≈ 4 characters or 0.75 words in English, though this varies significantly based on the text.
 
                   temperature: 0.7 // Controls randomness: 0.0 = very predictable/deterministic, 2.0 = very creative/random. 0.7 provides a good balance for natural, varied responses without being too unpredictable. !!! We will look at TEMPERATURE in another video...
                })
             });
+            console.log('📡 Response received in', Math.round(performance.now() - t0) + 'ms');
+            console.log('🔢 HTTP status:', response.status, response.statusText, response.ok ? '✅' : '⚠️');
 
             const data = await response.json();
             console.log('API Response:', data);
@@ -86,14 +124,25 @@
 
             if (data.error) {
                // OpenRouter error responses (bad key, bad model, rate limit...) have NO `choices`.
+               console.error('❌ OpenRouter returned an error:', data.error.message);
                resultDiv.innerHTML = `<p style="color: red;">Error: ${data.error.message}</p>`;
             } else if (!data.choices || !data.choices[0]) {
+               console.warn('⚠️ Response had no "choices" array — check the console for the raw payload.');
                resultDiv.innerHTML = `<p style="color: red;">Unexpected response from OpenRouter (no choices). Check the console.</p>`;
             } else {
                const msg = data.choices[0].message.content; // We can drill down for the content of the first message choice to get the 'answer'.
+               console.group('🔎 Reading the answer out of the response');
+               console.log('Path taken: data.choices[0].message.content');
+               console.log('🔚 Finish reason:', data.choices[0].finish_reason, '(why the model stopped)');
+               if (data.usage) {
+                  console.log('🧮 Token usage:', data.usage, '(prompt + completion = total billed)');
+               }
+               console.log('💬 Answer:', msg);
+               console.groupEnd();
                resultDiv.innerHTML = `<p><strong>Response:</strong></p><p>${output + '<br>' + msg}</p>`;
             }
          } catch (error) {
+            console.error('💥 Network/parse error during fetch:', error);
             resultDiv.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
          }
       });

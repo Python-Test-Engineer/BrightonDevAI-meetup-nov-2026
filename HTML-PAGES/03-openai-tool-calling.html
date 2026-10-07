@@ -36,27 +36,50 @@
    </div>
 
    <script>
+      // 🚀 ======================= DEMO CONSOLE LOGGING =======================
+      console.log('%c🚀 03 — OpenRouter Tool Calling (functions the AI can request)', 'font-size:15px;font-weight:bold;color:#0b7a5c');
+      console.log('📄 Page loaded. This demo shows the AI CALLING YOUR CODE, not just chatting.');
+      console.log('🧩 Flow: you describe tools → AI decides to call one → YOUR code runs it → result goes back → AI answers.');
+      console.log('🔄 It loops until the AI stops asking for tools (that is the "agent" loop).');
+
       // Pre-fill the API key from config.js (OpenRouter) so the demo works out of the box.
       if (typeof OPENROUTER_API_KEY !== 'undefined' && OPENROUTER_API_KEY) {
          document.getElementById('apiKey').value = OPENROUTER_API_KEY;
+         console.log('🔑 API key auto-filled from config.js (OpenRouter).');
+      } else {
+         console.warn('⚠️ No OPENROUTER_API_KEY found in config.js — type one into the field.');
       }
 
       // Tool implementation
       function get_weather() {
+         console.log('🛠️ [TOOL EXECUTED] get_weather() → returning a hard-coded weather string.');
          return "The current weather is 25°C, sunny with a light breeze.";
       }
       // Tool implementation
       function get_sum(a, b) {
+         console.log(`🛠️ [TOOL EXECUTED] get_sum(${a}, ${b}) → ${a} + ${b} = ${a + b}`);
          return `The sum of ${a} and ${b} is ${a + b}.`;
       }
 
       // Process tool calls
       function processToolCall(toolName, toolInput) {
+         console.log('🎯 processToolCall() is not magic — it is just a switch matching the name the AI asked for.');
+         console.group('🚦 Routing tool call');
+         console.log('Requested tool:', toolName);
+         console.log('Arguments:', toolInput);
          if (toolName === 'get_weather') {
-            return get_weather();
+            const r = get_weather();
+            console.log('↩️ Tool returned:', r);
+            console.groupEnd();
+            return r;
          } else if (toolName === 'get_sum') {
-            return get_sum(toolInput.a, toolInput.b);
+            const r = get_sum(toolInput.a, toolInput.b);
+            console.log('↩️ Tool returned:', r);
+            console.groupEnd();
+            return r;
          }
+         console.warn('❓ Unknown tool:', toolName);
+         console.groupEnd();
          return "Unknown tool";
       }
 
@@ -81,6 +104,10 @@
                content: userPrompt
             }
          ];
+         console.group('📤 Starting a fresh conversation');
+         console.log('The tool loop begins with just the user message:', messages);
+         console.log('🔄 As tools run, we append the AI\'s tool request AND the tool result back into `messages`.');
+         console.groupEnd();
          // TOOLS
          // We must define tools in a certain way as the model is trained to expect tools in this format.
 
@@ -120,16 +147,22 @@
                }
             }
          ];
+         console.log('%c🧰 Tool catalogue sent to the model (its available "hands"):', 'font-weight:bold;color:#0b7a5c', tools.map(t => t.function.name));
+         console.log('👉 The AI only sees the NAMES + DESCRIPTIONS + parameter schema. It never runs them itself.');
 
          let continueLoop = true;
          let iterations = 0;
          const maxIterations = 10;
+         console.log('🔁 Entering the agent loop (max', maxIterations, 'iterations to avoid infinite loops).');
 
          while (continueLoop && iterations < maxIterations) {
             iterations++;
+            console.log(`%c─── 🔁 Loop iteration ${iterations} ───`, 'color:#0b7a5c;font-weight:bold');
             displayMessage('loading', '⏳ Calling OpenRouter API...');
             // ******************** AI BIT ********************
             try {
+               console.log('🌐 POSTing conversation + tools to', OPENROUTER_API_URL);
+               const t0 = performance.now();
                const response = await fetch(OPENROUTER_API_URL, {
                   method: 'POST',
                   headers: {
@@ -144,8 +177,11 @@
                      tool_choice: 'auto'
                   })
                });
+               console.log('📡 Response in', Math.round(performance.now() - t0) + 'ms | status', response.status, response.ok ? '✅' : '⚠️');
+               console.log('ℹ️ tool_choice: "auto" means the model decides whether to call a tool or just answer.');
 
                const data = await response.json();
+               console.log('Raw API response:', data);
                // ******************** AI BIT ********************
                if (data.error) {
                   displayMessage('error', `❌ Error: ${data.error.message}`);
@@ -159,18 +195,22 @@
 
                // Add assistant message to conversation
                messages.push(assistantMessage);
+               console.log('➕ Appended the assistant message to the running conversation.');
 
                // Display assistant's response if it has content
                if (assistantMessage.content) {
                   displayMessage('assistant-message', `💬 Assistant: ${assistantMessage.content}`);
+                  console.log('💬 The assistant also produced text:', assistantMessage.content);
                }
 
                // Check if there are tool calls
                if (assistantMessage.tool_calls && assistantMessage.tool_calls.length > 0) {
+                  console.log('🛠️ The model asked for', assistantMessage.tool_calls.length, 'tool call(s).');
                   for (const toolCall of assistantMessage.tool_calls) {
                      const toolName = toolCall.function.name;
                      const toolInput = JSON.parse(toolCall.function.arguments);
                      console.log('🔧 Tool Call:', toolName, toolInput);
+                     console.log('🆔 tool_call_id:', toolCall.id, '(we must echo this back with the result)');
                      // Display tool call
                      displayMessage('tool-call',
                         `🔧 <span class="tool-name">${toolName}</span><div class="tool-args">Args: ${JSON.stringify(toolInput)}</div>`
@@ -191,10 +231,12 @@
                         tool_call_id: toolCall.id,
                         content: toolResult
                      });
+                     console.log('➕ Appended the tool result as a "tool" message. The loop will now call the API again so the model can USE it.');
                   }
                } else {
                   // No more tool calls, exit loop
                   console.log('❌ No tool calls, finishing.');
+                  console.log('🎉 The model gave a final answer without needing any tool — loop ends.');
                   continueLoop = false;
                }
 
@@ -204,32 +246,41 @@
                }
 
             } catch (error) {
+               console.error('💥 Error inside the loop:', error);
                displayMessage('error', `❌ Error: ${error.message}`);
                continueLoop = false;
             }
          }
+         console.log('%c🏁 Tool loop finished after', 'font-weight:bold;color:#0b7a5c', iterations, 'iteration(s).');
       }
 
       // Event listener
       document.getElementById('sendBtn').addEventListener('click', async () => {
+         console.log('%c👆 Send button clicked', 'color:#0b7a5c;font-weight:bold');
+         console.log('⏳ Awaiting window.openRouterReady (loads key + model from OPENROUTER.txt).');
          await window.openRouterReady; // key + model come from OPENROUTER.txt
+         console.log('✅ openRouterReady resolved.');
          // Use the key typed into the field, falling back to the key from OPENROUTER.txt.
          const apiKey = document.getElementById('apiKey').value || OPENROUTER_API_KEY;
          const prompt = document.getElementById('prompt').value;
 
          if (!apiKey) {
+            console.warn('🛑 No API key — aborting.');
             alert('Please enter your OpenRouter API key');
             return;
          }
 
          if (!prompt) {
+            console.warn('🛑 Empty prompt — aborting.');
             alert('Please enter a prompt');
             return;
          }
 
          document.getElementById('sendBtn').disabled = true;
+         console.log('🔒 Disabled the Send button while the agent runs.');
          await handleToolCalling(apiKey, prompt);
          document.getElementById('sendBtn').disabled = false;
+         console.log('🔓 Re-enabled the Send button.');
       });
 
       // Allow Enter key to submit

@@ -27,25 +27,43 @@
    <div id="result"></div>
 
    <script>
+      // 🚀 ======================= DEMO CONSOLE LOGGING =======================
+      console.log('%c🚀 01.2 — OpenRouter + RAG (Retrieval Augmented Generation)', 'font-size:15px;font-weight:bold;color:#0b7a5c');
+      console.log('📄 Page loaded. RAG = we inject EXTRA FACTS the model was never trained on.');
+      console.log('🧩 The trick: bake the facts into the SYSTEM prompt alongside the user question.');
+      console.log('🔎 That\'s why the answer is correct — check the logs and see where the facts come from.');
+
       // Pre-fill the API key from config.js (OpenRouter) so the demo works out of the box.
       if (typeof OPENROUTER_API_KEY !== 'undefined' && OPENROUTER_API_KEY) {
          document.getElementById('apiKey').value = OPENROUTER_API_KEY;
+         console.log('🔑 API key auto-filled from config.js (OpenRouter).');
+      } else {
+         console.warn('⚠️ No OPENROUTER_API_KEY found in config.js — type one into the input field.');
       }
 
       document.getElementById('sendBtn').addEventListener('click', async () => {
+         console.log('%c👆 Send button clicked', 'color:#0b7a5c;font-weight:bold');
+         console.log('⏳ Awaiting window.openRouterReady (loads key + model from OPENROUTER.txt).');
          await window.openRouterReady; // key + model come from OPENROUTER.txt
+         console.log('✅ openRouterReady resolved.');
          // Use the key typed into the field, falling back to the key from OPENROUTER.txt.
          const apiKey = document.getElementById('apiKey').value || OPENROUTER_API_KEY;
          const prompt = document.getElementById('prompt').value;
          const resultDiv = document.getElementById('result');
 
+         console.log('📝 User question:', JSON.stringify(prompt));
+         console.log('🔑 Using API key:', apiKey ? apiKey.slice(0, 8) + '…(hidden)' : '(none)');
+
 
          if (!apiKey) {
+            console.warn('🛑 No API key — aborting.');
             resultDiv.innerHTML = '<p style="color: red;">Please enter your API key</p>';
             return;
          }
 
          resultDiv.innerHTML = '<p>Loading...</p>';
+         console.log('⌛ Showing "Loading..." while the request is in flight.');
+
          system_prompt = `
          You are a helpful assistant. You always answer in a concise manner. 
          You never refuse to answer but do not make things up - just say 'I don't know'. You always try to help the user as much as possible. 
@@ -53,8 +71,14 @@
          Include relevant context from the information provided below when answering the user's question.
     
          `;
+         console.group('🧭 Started the system prompt (rules for the assistant)');
+         console.log(system_prompt);
+         console.groupEnd();
 
          // We can add additional context for RAG (Retrieval Augmented Generation) here which was not in trained model. It can also be dynamic content retrieved from a database or API - we will see that later.
+         console.group('📚 RAG CONTEXT — facts the model was never trained on');
+         console.log('👉 This is the heart of RAG: stuffing fresh/private facts into the prompt.');
+         console.log('👉 Normally this block would come from a database, API or vector search.');
          RAG = `
             Brighton Data Intelligence Meet Up is taking place on October 29th.
             The venue is the Platform9.
@@ -62,15 +86,28 @@
             The Speaker is Craig West and the topic is 'AI Agents and Evals for all languages'
             Brighton Web Development Meet Up is part of Silicon Brighton.
             The current organiser is Datacove and it has been running since <strong>1865 (3rd October 1865)</strong> the first meetup being organised by Datacove.
-           `
+          `
+         console.log(RAG);
+         console.groupEnd();
 
          system_prompt += RAG;
+         console.log('%c🔗 Merged the user prompt + RAG facts into one system prompt (this is the whole RAG recipe).', 'font-weight:bold;color:#0b7a5c');
          console.log(system_prompt);
 
          // ******************** AI BIT ********************
 
 
          try {
+            console.group('📤 Sending request');
+            console.log('Model:', OPENROUTER_MODEL);
+            console.log('Messages:', [
+               { role: 'system', content: '(system prompt + RAG context — see log above)' },
+               { role: 'user', content: prompt }
+            ]);
+            console.log('⚙️ max_tokens: 1024');
+            console.groupEnd();
+
+            const t0 = performance.now();
             const response = await fetch(OPENROUTER_API_URL, {
                method: 'POST',
                headers: {
@@ -84,21 +121,32 @@
                   max_tokens: 1024
                })
             });
+            console.log('📡 Response received in', Math.round(performance.now() - t0) + 'ms');
+            console.log('🔢 HTTP status:', response.status, response.statusText, response.ok ? '✅' : '⚠️');
 
             const data = await response.json();
             console.log('API Response:', data);
             let output = "";
 
             if (data.error) {
+               console.error('❌ OpenRouter error:', data.error.message);
                // OpenRouter error responses (bad key, bad model, rate limit...) have NO `choices`.
                resultDiv.innerHTML = `<p style="color: red;">Error: ${data.error.message}</p>`;
             } else if (!data.choices || !data.choices[0]) {
+               console.warn('⚠️ No "choices" in the response — dump the raw payload above.');
                resultDiv.innerHTML = `<p style="color: red;">Unexpected response from OpenRouter (no choices). Check the console.</p>`;
             } else {
                const msg = data.choices[0].message.content;
+               console.group('🔎 Extracting the answer');
+               console.log('Path: data.choices[0].message.content');
+               console.log('🔚 Finish reason:', data.choices[0].finish_reason);
+               if (data.usage) console.log('🧮 Token usage:', data.usage);
+               console.log('💬 Answer:', msg);
+               console.groupEnd();
                resultDiv.innerHTML = `<p><strong>Response:</strong></p><p>${output + '<br>' + msg}</p>`;
             }
          } catch (error) {
+            console.error('💥 Network/parse error:', error);
             resultDiv.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
          }
       });
