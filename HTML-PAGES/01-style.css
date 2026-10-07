@@ -16,6 +16,14 @@ input {
    margin: 10px 0;
 }
 
+/* API key field: mask the value as bullets so it can't be read off the screen
+   during the talk. Native -webkit-text-security (Chrome/Edge/Safari) renders the
+   value like a password field; the placeholder stays readable. Unsupported
+   browsers fall back to plain text. */
+input#apiKey {
+   -webkit-text-security: disc;
+}
+
 button {
    padding: 10px 20px;
    background: #007bff;
