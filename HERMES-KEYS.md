@@ -1,6 +1,14 @@
 # Hermes Agent: OpenRouter API Key (PowerShell)
 
-hermes config set OPENROUTER_API_KEY sk-or-v1-xxxxxxxx
+## Quick reference
+
+```powershell
+hermes config                                   # view config
+hermes config edit                              # edit config.yaml
+hermes config set OPENROUTER_API_KEY sk-or-...  # set/replace key (saves to .env)
+hermes model                                    # interactive provider/model setup
+hermes config check                             # check for missing options
+```
 
 How to **see** the current OpenRouter key, **delete all references** to it, and **set up a new one** on Windows.
 
