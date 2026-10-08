@@ -6,7 +6,7 @@ All code, slides and more...
 
 [https://github.com/Python-Test-Engineer/BrightonDevAI-meetup-nov-2026](https://github.com/Python-Test-Engineer/BrightonDevAI-meetup-nov-2026)
 
-<img src="./brighton-meetup-qr.png" width="400px">
+<img src="./qr.png" width="400px">
 
 <br><br><br><br>
 
