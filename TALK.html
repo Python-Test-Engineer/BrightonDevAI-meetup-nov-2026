@@ -388,7 +388,9 @@
       <h2><span class="num">01</span>The one-line pitch</h2>
       <p><strong>AI Agents are just code making a REST API call</strong> — admittedly, a very magical API. Pull away the
         hype and an agent is a <code>fetch</code> (a POST request with a JSON payload) wrapped in a loop, with some
-        history and some tools bolted on. That's it. This whole talk is about removing that fear.</p>
+        history and some tools bolted on.</p>
+      <p>That's it.</p>
+      <p>This whole talk is about demystifying and simplifying AI agents.</p>
 
       <figure class="fig-api">
         <img src="./01-REST-API.png" alt="A fetch to the API with a payload">
@@ -397,8 +399,9 @@
       <div class="card note">
         <span class="tag">The image of the night</span>
         <p style="margin:0">This snippet — a <code>fetch</code> to the API with a payload — is the single most important
-          image of the night. Read it as one POST request: you send the model's rules and the user's question as a JSON
-          body, and it answers. Every "agent" you've ever heard of is just this line, wrapped in a harness.</p>
+          image of the night. </p>
+        <p>Read it as one POST request: you send the model's rules and the user's question as a JSON
+          body, and it answers.</p>
       </div>
 
       <p>My goal tonight is not to teach you a framework. It's to <strong>demystify and simplify</strong> — to show you
@@ -406,16 +409,21 @@
         or plug agents into the workflows you already have. Business as usual.</p>
       <br><br><br><br><br><br><br><br>
       <div class="card quote">
-        <p style="margin:0">A quick word on who's doing the talking. I'm Craig West — one of you, a developer — and when
+        <p style="margin:0">I'm Craig West — one of you, a developer — and when
           I'm not wrestling with agents you'll find me walking a Fox Red Labrador (Leo) and a Cockapoo (Pip).</p>
+
         <figure class="fig-left">
           <img src="./images/leo-and-pip-stairs.jpeg" alt="Leo and Pip on the stairs">
         </figure>
+
+
         <p style="margin:0">We even have a local red fox that follows us on the walks. The dogs and the fox have more
           patience with me than my code does, most days.</p>
         <figure class="fig-med">
           <img src="./images/leo-fox-daylight-2.png" alt="Leo and the fox in daylight">
         </figure>
+        <p>I started out many years ago as a developer and SQL DBA, working through JS and Python frameworks to ML/AI.
+        </p>
       </div>
     </section>
     <br><br><br><br><br><br><br><br>
@@ -424,18 +432,18 @@
     <!-- ============ MOMENT ============ -->
     <section>
       <h2><span class="num">02</span>My take on the AI agent moment</h2>
-      <p>I have been a developer through some shifts, but this one got hold of me because it felt like a different
-        <em>world</em>, not a different tool. So I went looking for a way in.
-      </p>
+
       <p>Three things were on my mind as I put this talk together:</p>
       <ol>
-        <li><strong>Client-side control.</strong> Instead of a server team pre-building every endpoint, <em>I</em>
-          create the endpoint on the client side, at runtime, as I go.</li>
-        <li><strong>Natural language as the interface.</strong> I write the request in English, my language, not a rigid
-          schema.</li>
-        <li><strong>Autonomy.</strong> The LLM decides the flow. The model chooses what to do next, not me.</li>
+        <li><strong>Client-side control.</strong> Instead of a server team pre-building every endpoint, <em>we</em>
+          create the endpoint on the client side, at runtime, as we go.</li>
+        <li><strong>Natural language as the interface.</strong> We write the request in Natural Language - in this case
+          English.</li>
+        <li><strong>Autonomy.</strong> The LLM decides the flow. The model chooses what to do next, not us, within
+          certain constraints.</li>
       </ol>
-      <p>If those three sound obvious once said — good, they are. That's the whole point.</p>
+      <p>As a talk member once said "This is very underwhelming." </p>
+      <p>I took it as a compliment.</p>
 
       <h3>The upside-down mouse</h3>
       <p>Here's the image I keep coming back to. Picture an upside-down computer mouse. When you pick one up the wrong
@@ -456,17 +464,17 @@
       <h2><span class="num">03</span>History · Context · Looping · Tools</h2>
       <p>I keep four words pinned to the front of my mind, because every agent, however fancy, is built from them:</p>
       <ul class="building-blocks">
+        <li><b>Looping</b> — repeat the call until the model decides it has a final answer.</li>
+        <li><b>Context</b> — give it the facts it needs, either statically or fetched dynamically.</li>
+        <li><b>Tools</b> — runtime functions it can reach for when it needs to do something or get more information.
         <li><b>History</b> — the model is stateless at its core, so we give it memory by feeding back previous
           exchanges.</li>
-        <li><b>Context</b> — give it the facts it needs, either statically or fetched dynamically.</li>
-        <li><b>Looping</b> — repeat the call until the model decides it has a final answer.</li>
-        <li><b>Tools</b> — runtime functions it can reach for when it needs to do something or get more information.
         </li>
       </ul>
       <p>Everything below is just one of these four ideas wearing a different coat.</p>
 
       <h3>Function composition is not new</h3>
-      <p>For me the cleanest mental model is the boss-eyed <code>function</code> frame:</p>
+      <p>For me the cleanest mental model is the <code>function</code> frame:</p>
       <pre>input -&gt; function(input) -&gt; output -&gt; function(output) -&gt; output2</pre>
       <p>And that "function" can be an agent, just as easily as it can be a class or a regular method in your app. Agent
         calls one agent, hands it output, waits for the next. No different to passing objects between Classes in a
@@ -478,7 +486,7 @@
       <p>One small thing I want to flag early (there's a longer note in the repo,
         <code>why_temp_equal_zero_not_deterministic.md</code>): dropping <code>temperature</code> to zero does
         <strong>not</strong> make the model deterministic. Don't build tests on that assumption — the sampling and
-        hardware still introduce variety. Worth keeping in your back pocket.
+        hardware still introduce variety.
       </p>
     </section>
     <br><br><br><br><br><br><br><br>
@@ -513,7 +521,7 @@
           <span class="step">Demo 2 · Adding Context</span>
           <h4>RAG</h4>
           <p>Still one call. But now I glue extra facts into the system prompt — facts the model was never trained on
-            ("the meetup is 29 October at Platform9, speaker Craig West…"). This is Retrieval-Augmented Generation in
+            ("the meetup is..."). This is Retrieval-Augmented Generation in
             its simplest form: <strong>bake the facts in before you ask.</strong></p>
           <p>It can be dynamic, too. That block of context normally comes from a database, an API, or a vector search.
             But the recipe never changes — retrieve the facts, stuff them in the prompt, ask. Context engineering, done.
@@ -530,7 +538,7 @@
           </p>
           <p>And here's the shift: <strong>this is the agent loop.</strong> The loop keeps running while the model asks
             for tools and stops when it decides it has a final answer (with a max-iteration guard so we never loop
-            forever). The model directs the flow. That's the autonomy point from earlier, code in front of you.</p>
+            forever). The model directs the flow. That's the autonomy point from earlier.</p>
         </div>
 
         <div class="demo">
