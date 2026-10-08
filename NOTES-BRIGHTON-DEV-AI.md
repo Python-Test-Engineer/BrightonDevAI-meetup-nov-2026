@@ -2,9 +2,11 @@
 
 # GitHub Repo
 
-[https://github.com/Python-Test-Engineer/brighton-data-intelligence-may-2026](https://github.com/Python-Test-Engineer/brighton-data-intelligence-may-2026)
+All code, slides and more...
 
-<img src="https://raw.githubusercontent.com/Python-Test-Engineer/brighton-data-intelligence-may-2026/main/qr_brighton_data_intelligence.png" width="500px">
+[https://github.com/Python-Test-Engineer/BrightonDevAI-meetup-nov-2026](https://github.com/Python-Test-Engineer/BrightonDevAI-meetup-nov-2026)
+
+<img src="./brighton-meetup-qr.png" width="400px">
 
 <br><br><br><br>
 
@@ -14,14 +16,13 @@
 
 2. Understand the concepts of MEMORY-CONTEXT-LOOPING-TOOl_CALLING as the building blocks of AI Agents.
 
-3. See how these building blocks help us build coding/executive_assistants and finally a Data Intelligence Agent (APP).
-s
+3. See how these building blocks help us build coding/executive_assistants and finally a minimal coding agent/harness.
 
 <br><br><br><br>
 
 ## Who am I?
 
-**I am one of *US* - a Data /Agentic EnEngineer.** (I will use Data Engineer as a catch all description).
+**I am one of *US* - a developer**.
 
 Wrestling and getting to grips with these new technologies.
 
@@ -31,13 +32,12 @@ I was in tech in the early 2000s as a Business Information Architect and Certifi
 
 Website: [https://craigwestai.com/](https://craigwestai.com/)
 
-### Leo and 
+### Leo and Pip
 
 Fox red labrador (Leo) and Cockapoo (Pip)
 
-<img src="./images/leo-main.png" width="250px" >
-<img src="./images/pip-in-crate.jpeg" width="400px" >
-<img src="./images/leo-pip-couple.jpg" width="400px" >
+<img src="./images/leo-and-pip-stairs.jpeg" width="250px" >
+
 
 We have a local red fox that is apt to follow us...
 
@@ -76,11 +76,11 @@ What if AI Agents were 'just' code with a REST API call, admittedly a very magic
 <img src="./images/01-REST-API.png" width="400" >
 
 <div style="color:orange;font-style:italic;font-size:22px">
-This snippet of code is the most important takeway tonight...to be explained
+This snippet of code is the most important takeway tonight...to be explained.
+<br>Consider this a FETCH request with a payload.
 </div>
 
-We can then create the HARNESS around this.
-Business as usual.
+We can then create the HARNESS around this. Business as usual.
 
 This is the main focus of the talk - **demystify and simplify** - and this will enable you to create AI Agents and also construct workflows using AI Agents.
 
@@ -148,8 +148,6 @@ We generate a response with our first query using a system prompt to create code
 
 We then pass the output into another function that acts as a reviewer to produce the next version of the code.
 
-G
-
 <br><br><br><br>
 
 ## HISTORY - LOOPING - CONTEXT - TOOLS
@@ -203,22 +201,10 @@ In fact, `bash` is the only tool you need.
 
 ## PROMPT ENGINEERING => CONTEXT ENGINEERING => HARNESS ENGINEERING
 
+A harness with a lower model can outperform a higher model. Many times it is the harness that is the key factor.
+
+Our minimal coding agent is a loop that continues until an answer is found.
+
+Let's look at the demo...
+
 <br><br><br><br>
-
-## Data Intelligence Agent
-
-Let's look at an example that:
-
-- given a CSV (no data card)
-- does ETL
-- create 40+ questions of an SQL nature
-- creates the SQL statement for these, runs them and saves the answer as part of the knowledge base
-- save OBJECTIVE questions that a user may want answering
-- creates all the plots and charts
-- use AI to analase each image for useful information
-- summarise all of these in one document
-- answers the OBJECTIVES
-- has a 'ASK AI' section to answer questions based on the SQL and chart analyses
-- uses another AI to be ADVERSARIAL and critique the original analysis
-
-The repo for this is in `LINKS.md`
