@@ -1,4 +1,4 @@
-# Brighton Web Dev Meetup — Nov 2026
+# BrightonDev.ai Meetup — Nov 2026
 
 Live-coding materials for a talk on AI agents and coding agents. Two runnable demo
 projects, both calling the OpenRouter chat API, plus the talk's supporting notes.
