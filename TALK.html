@@ -7,16 +7,25 @@
   <title>AI Agents — Demystified and Simplified</title>
   <style>
     :root {
-      --bg: #0b0d12;
-      --bg-soft: #11141c;
-      --panel: #161a24;
-      --border: #262c3a;
-      --text: #e7ebf3;
-      --muted: #9aa3b5;
-      --accent: #7c5cff;
-      --accent-2: #22d3ee;
-      --code-bg: #0d0f16;
+      --bg: #faf9f5;
+      --bg-soft: #f2efe8;
+      --card: #ffffff;
+      --border: #e6e2d8;
+      --border-strong: #d8d3c6;
+      --ink: #262625;
+      --muted: #6e6d68;
+      --faint: #8f8d86;
+      --clay: #c14f31;
+      --clay-strong: #a03b22;
+      --clay-soft: #f0ded6;
+      --rust: #d97757;
+      --code-bg: #1f1e1d;
+      --code-ink: #f0eee6;
+      --code-muted: #8f8c84;
       --radius: 14px;
+      --serif: "Georgia", "Times New Roman", "Iowan Old Style", serif;
+      --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --mono: "SFMono-Regular", ui-monospace, Consolas, "Liberation Mono", Menlo, monospace;
     }
 
     * {
@@ -30,16 +39,16 @@
     }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background: radial-gradient(1200px 600px at 80% -10%, #1a1533 0%, var(--bg) 55%);
-      color: var(--text);
+      font-family: var(--sans);
+      background: linear-gradient(180deg, #f7f4ec 0%, var(--bg) 320px);
+      color: var(--ink);
       line-height: 1.65;
       -webkit-font-smoothing: antialiased;
       font-size: 32px;
     }
 
     .wrap {
-      max-width: 1400px;
+      max-width: 1280px;
       margin: 0 auto;
       padding: 0 48px 120px;
     }
@@ -59,36 +68,40 @@
 
     .eyebrow {
       display: inline-block;
-      font-size: 20px;
-      letter-spacing: 3px;
+      font-family: var(--mono);
+      font-size: 24px;
+      letter-spacing: 2px;
       text-transform: uppercase;
-      color: var(--accent-2);
-      border: 1px solid #1e3a45;
-      background: rgba(34, 211, 238, .06);
-      padding: 8px 18px;
+      color: var(--clay-strong);
+      border: 1.5px solid var(--clay);
+      background: var(--clay-soft);
+      padding: 10px 24px;
       border-radius: 999px;
-      margin-bottom: 30px;
+      margin-bottom: 34px;
+      font-weight: 600;
     }
 
     h1 {
-      font-size: clamp(52px, 8vw, 96px);
-      line-height: 1.05;
-      font-weight: 800;
-      letter-spacing: -1px;
+      font-family: var(--serif);
+      font-size: clamp(54px, 8vw, 92px);
+      line-height: 1.06;
+      font-weight: 500;
+      letter-spacing: -1.5px;
       margin-bottom: 26px;
     }
 
     h1 .grad {
-      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      background: linear-gradient(100deg, var(--clay) 0%, var(--rust) 100%);
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
+      font-style: italic;
     }
 
     .sub {
       color: var(--muted);
-      font-size: 28px;
-      max-width: 760px;
+      font-size: 27px;
+      max-width: 720px;
       margin: 0 auto 10px;
     }
 
@@ -104,39 +117,46 @@
     }
 
     .author b {
-      color: var(--text);
+      color: var(--ink);
       font-weight: 600;
     }
 
     /* ---------- sections ---------- */
     section {
-      margin-top: 90px;
+      margin-top: 96px;
     }
 
     h2 {
-      font-size: clamp(40px, 5.5vw, 56px);
-      font-weight: 800;
-      letter-spacing: -0.5px;
-      margin-bottom: 26px;
+      font-family: var(--serif);
+      font-size: clamp(38px, 5vw, 52px);
+      font-weight: 500;
+      letter-spacing: -0.75px;
+      margin-bottom: 28px;
       padding-top: 8px;
+      line-height: 1.15;
     }
 
     h2 .num {
-      color: var(--accent);
-      font-weight: 800;
-      margin-right: 14px;
+      color: var(--clay);
+      font-family: var(--mono);
+      font-size: .62em;
+      font-weight: 600;
+      margin-right: 18px;
+      letter-spacing: 0;
+      vertical-align: 3px;
     }
 
     h3 {
-      font-size: 32px;
-      font-weight: 700;
-      margin: 44px 0 14px;
-      color: var(--accent-2);
+      font-family: var(--serif);
+      font-size: 33px;
+      font-weight: 600;
+      margin: 46px 0 14px;
+      color: var(--clay-strong);
     }
 
     p {
       margin-bottom: 16px;
-      color: var(--text);
+      color: var(--ink);
     }
 
     p.muted {
@@ -144,31 +164,44 @@
     }
 
     strong {
-      color: #fff;
+      color: var(--ink);
+      font-weight: 700;
     }
 
     a {
-      color: var(--accent-2);
+      color: var(--clay);
       text-decoration: none;
     }
 
     a:hover {
       text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    code {
+      font-family: var(--mono);
+      font-size: .82em;
+      background: var(--bg-soft);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1px 7px;
+      color: var(--clay-strong);
     }
 
     /* ---------- cards ---------- */
     .card {
-      background: var(--panel);
+      background: var(--card);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 28px 30px;
+      box-shadow: 0 1px 2px rgba(38, 38, 37, .04);
+      padding: 30px 32px;
       margin: 26px 0;
     }
 
     .card.quote {
-      border-left: 4px solid var(--accent);
+      border-left: 4px solid var(--clay);
       font-style: italic;
-      color: var(--text);
+      color: var(--ink);
       font-size: 26px;
     }
 
@@ -177,18 +210,19 @@
     }
 
     .card.note {
-      background: rgba(34, 211, 238, .05);
-      border-color: #1e3a45;
+      background: linear-gradient(180deg, #fbf7f2, #f7efe8);
+      border-color: var(--clay-soft);
     }
 
     .card.note .tag {
       display: inline-block;
-      font-size: 18px;
-      letter-spacing: 2px;
+      font-family: var(--mono);
+      font-size: 17px;
+      letter-spacing: 1.5px;
       text-transform: uppercase;
-      color: var(--accent-2);
+      color: var(--clay);
       margin-bottom: 10px;
-      font-weight: 700;
+      font-weight: 600;
     }
 
     /* ---------- lists ---------- */
@@ -207,15 +241,16 @@
     }
 
     .building-blocks li {
-      background: var(--panel);
+      background: var(--card);
       border: 1px solid var(--border);
       border-radius: 12px;
-      padding: 16px 20px;
+      padding: 18px 22px;
       margin-bottom: 12px;
+      box-shadow: 0 1px 2px rgba(38, 38, 37, .04);
     }
 
     .building-blocks li b {
-      color: var(--accent-2);
+      color: var(--clay-strong);
     }
 
     /* ---------- images ---------- */
@@ -228,6 +263,7 @@
       max-width: 100%;
       border-radius: 12px;
       border: 1px solid var(--border);
+      background: var(--card);
     }
 
     figure.fig-left img {
@@ -247,7 +283,7 @@
     }
 
     figure.fig-qr img {
-      width: 400px;
+      width: 340px;
     }
 
     figcaption {
@@ -275,19 +311,20 @@
     /* ---------- code ---------- */
     pre {
       background: var(--code-bg);
-      border: 1px solid var(--border);
+      border: 1px solid #2c2a28;
       border-radius: 12px;
       padding: 18px 22px;
       overflow-x: auto;
-      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      font-family: var(--mono);
       font-size: 24px;
-      color: #c9d4e8;
+      color: var(--code-ink);
       margin: 20px 0;
       line-height: 1.6;
     }
 
     pre .c {
-      color: #6b7688;
+      color: var(--code-muted);
+      font-style: italic;
     }
 
     /* ---------- build blocks ---------- */
@@ -298,10 +335,10 @@
     }
 
     .demo {
-      background: var(--panel);
+      background: var(--card);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 26px 30px;
+      padding: 28px 32px;
       margin-bottom: 18px;
       position: relative;
     }
@@ -310,19 +347,23 @@
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      font-size: 20px;
-      font-weight: 700;
+      font-family: var(--mono);
+      font-size: 18px;
+      font-weight: 600;
       letter-spacing: 1px;
       text-transform: uppercase;
-      color: #0b0d12;
-      background: linear-gradient(90deg, var(--accent), var(--accent-2));
-      padding: 4px 12px;
+      color: var(--clay);
+      border: 1px solid var(--clay-soft);
+      background: rgba(193, 79, 49, .05);
+      padding: 5px 13px;
       border-radius: 999px;
       margin-bottom: 14px;
     }
 
     .demo h4 {
+      font-family: var(--serif);
       font-size: 34px;
+      font-weight: 600;
       margin-bottom: 10px;
     }
 
@@ -338,25 +379,26 @@
     .repo-btn {
       display: inline-block;
       margin: 10px 0 24px;
-      padding: 12px 26px;
-      background: linear-gradient(90deg, var(--accent), var(--accent-2));
-      color: #0b0d12;
-      font-weight: 700;
+      padding: 14px 28px;
+      background: var(--clay);
+      color: #fff;
+      font-weight: 600;
       border-radius: 999px;
       text-decoration: none;
-      transition: transform .15s ease, box-shadow .15s ease;
+      transition: transform .15s ease, background .15s ease, box-shadow .15s ease;
     }
 
     .repo-btn:hover {
       transform: translateY(-2px);
-      box-shadow: 0 8px 30px rgba(124, 92, 255, .35);
+      background: var(--clay-strong);
+      box-shadow: 0 10px 30px rgba(193, 79, 49, .28);
       text-decoration: none;
     }
 
     .divider {
       margin: 80px auto;
       height: 1px;
-      background: linear-gradient(90deg, transparent, var(--border), transparent);
+      background: linear-gradient(90deg, transparent, var(--border-strong), transparent);
       border: 0;
     }
   </style>
@@ -515,6 +557,10 @@
             <p style="margin:0">This snippet — a <code>fetch</code> with a payload — is the most important takeaway of
               the whole night. Everything else tonight hangs a harness around this line.</p>
           </div>
+
+          <figure class="fig-wide">
+            <img src="./images/email01-basic-request.png" alt="Demo 1 screenshot — the basic stateless call">
+          </figure>
         </div>
 
         <div class="demo">
@@ -526,6 +572,10 @@
           <p>It can be dynamic, too. That block of context normally comes from a database, an API, or a vector search.
             But the recipe never changes — retrieve the facts, stuff them in the prompt, ask. Context engineering, done.
           </p>
+
+          <figure class="fig-wide">
+            <img src="./images/email03-with-context.png" alt="Demo 2 screenshot — adding context (RAG)">
+          </figure>
         </div>
 
         <div class="demo">
@@ -539,7 +589,11 @@
           <p>And here's the shift: <strong>this is the agent loop.</strong> The loop keeps running while the model asks
             for tools and stops when it decides it has a final answer (with a max-iteration guard so we never loop
             forever). The model directs the flow. That's the autonomy point from earlier.</p>
-        </div>
+
+                      <figure class="fig-wide">
+                        <img src="./images/email04-tool-calling.png" alt="Demo 3 screenshot — tool calling and the agent loop">
+                      </figure>
+                    </div>
 
         <div class="demo">
           <span class="step">Demo 4 · Adding History</span>
@@ -550,8 +604,12 @@
             <code>localStorage</code>, so a refresh keeps the chat.
           </p>
           <p>The honest cost is right in the console: more history = more tokens = more money. Memory engineering is
-            really token budget management.</p>
-        </div>
+                      really token budget management.</p>
+
+                    <figure class="fig-wide">
+                      <img src="./images/email02-folow-up.png" alt="Demo 4 screenshot — adding history (memory)">
+                    </figure>
+                  </div>
 
       </div>
     </section>
