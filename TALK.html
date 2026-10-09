@@ -401,6 +401,115 @@
       background: linear-gradient(90deg, transparent, var(--border-strong), transparent);
       border: 0;
     }
+
+    /* ---------- lightbox ---------- */
+    figure img {
+      cursor: zoom-in;
+      transition: filter .15s ease;
+    }
+
+    figure img:hover {
+      filter: brightness(1.03) contrast(1.02);
+    }
+
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(20, 19, 18, .9);
+      padding: 0;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity .2s ease, visibility .2s ease;
+      cursor: zoom-out;
+    }
+
+    .lightbox.open {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .lightbox .lb-stage {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      width: 100%;
+      height: 100%;
+      padding: 40px;
+    }
+
+    .lightbox .lb-stage img {
+      object-fit: contain;
+      background: transparent;
+      transform: scale(.96);
+      transition: transform .2s ease;
+    }
+
+    .lightbox.open .lb-stage img {
+      transform: scale(1);
+    }
+
+    .lightbox .lb-stage.single {
+      padding: 0;
+      gap: 0;
+    }
+
+    .lightbox .lb-stage.single img {
+      width: 100%;
+      height: 100%;
+    }
+
+    .lightbox .lb-stage.multi {
+      padding: 0 40px;
+    }
+
+    .lightbox .lb-stage.multi img {
+      flex: 1 1 0;
+      min-width: 0;
+      height: 100%;
+      max-width: calc(50% - 8px);
+    }
+
+    .lightbox .lb-close {
+      position: absolute;
+      top: 20px;
+      right: 26px;
+      z-index: 3;
+      width: 52px;
+      height: 52px;
+      border: 0;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, .12);
+      color: #fff;
+      font-size: 34px;
+      line-height: 1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background .15s ease;
+    }
+
+    .lightbox .lb-close:hover {
+      background: rgba(255, 255, 255, .25);
+    }
+
+    .lightbox .lb-caption {
+      position: absolute;
+      bottom: 24px;
+      left: 0;
+      right: 0;
+      z-index: 3;
+      text-align: center;
+      color: rgba(255, 255, 255, .7);
+      font-size: 20px;
+      font-style: italic;
+      padding: 0 40px;
+    }
   </style>
 </head>
 
@@ -653,6 +762,72 @@
     </footer>
 
   </main>
+
+  <div class="lightbox" id="lightbox" aria-hidden="true" role="dialog" aria-modal="true">
+    <button class="lb-close" id="lbClose" aria-label="Close">&times;</button>
+    <div class="lb-stage single" id="lbStage"></div>
+    <div class="lb-caption" id="lbCaption"></div>
+  </div>
+
+  <script>
+    (function () {
+      var lb = document.getElementById('lightbox');
+      var lbStage = document.getElementById('lbStage');
+      var lbCaption = document.getElementById('lbCaption');
+
+      function open(items) {
+        lbStage.innerHTML = '';
+        lbStage.className = 'lb-stage ' + (items.length > 1 ? 'multi' : 'single');
+        var captionParts = [];
+        items.forEach(function (item) {
+          var el = document.createElement('img');
+          el.src = item.src;
+          el.alt = item.alt || '';
+          lbStage.appendChild(el);
+          if (item.caption) captionParts.push(item.caption);
+        });
+        lbCaption.textContent = captionParts.join('  ·  ');
+        lb.classList.add('open');
+        lb.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+      }
+
+      function close() {
+        lb.classList.remove('open');
+        lb.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+        setTimeout(function () { lbStage.innerHTML = ''; }, 200);
+      }
+
+      function itemFor(img) {
+        var fig = img.closest('figure');
+        var cap = fig ? fig.querySelector('figcaption') : null;
+        return {
+          src: img.currentSrc || img.src,
+          alt: img.alt,
+          caption: cap ? cap.textContent.trim() : (img.alt || '')
+        };
+      }
+
+      document.querySelectorAll('figure img').forEach(function (img) {
+        img.addEventListener('click', function () {
+          // Images grouped in an .img-row open together (e.g. the two mouse photos)
+          var row = img.closest('.img-row');
+          var source = row ? row.querySelectorAll('figure img') : [img];
+          var items = Array.prototype.map.call(source, itemFor);
+          open(items);
+        });
+      });
+
+      lb.addEventListener('click', function (e) {
+        if (lb.classList.contains('open')) close();
+      });
+
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && lb.classList.contains('open')) close();
+      });
+    })();
+  </script>
 </body>
 
 </html>
