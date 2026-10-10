@@ -4,6 +4,11 @@ CLAUDE
 
 $env:ANTHROPIC_API_KEY = <"API-KEY>"
 
+OPENAI
+
+$env:OPENAI_API_KEY = "sk-..." 
+setx OPENAI_API_KEY "sk-..."
+
 ## Quick reference
 
 ```powershell
