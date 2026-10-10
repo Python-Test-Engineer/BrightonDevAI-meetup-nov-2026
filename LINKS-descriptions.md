@@ -19,6 +19,14 @@ https://www.youtube.com/watch?v=1OLrT3dEzhA
 
 ## Build your own mini Coding Agent
 
+https://github.com/Python-Test-Engineer/brighton-web-dev-meetup-nov-2026
+
+The repo for this talk at the BrightonDev.ai Meetup (Nov 2026) — contains the talk notes, links, and demo materials for building and understanding mini coding agents.
+
+https://github.com/avbiswas/neural-code
+
+"NeuralCode" — a minimal coding agent harness in Python, built to show how the pieces of a coding agent fit together. Companion repo to the Neural Breakdown video on building a coding agent from scratch; cycle through the commits to see it built stage by stage. Includes shell/read/write/edit tools, skills directories, subagents for codebase exploration, todo tracking, context compaction, and git-aware reminders.
+
 https://github.com/Python-Test-Engineer/mini-claude
 
 A deliberately minimal "very basic Claude Code" in Python — a stripped-down coding agent that reads files, reasons, and takes action through the Claude-style agentic loop. Comes with an EXPLAINER.md that details exactly how it works internally.

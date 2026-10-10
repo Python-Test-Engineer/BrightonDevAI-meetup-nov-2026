@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brighton Bikeshare Dashboard</title>
+<style>
+  :root {
+    --bg: #0f172a; --panel: #1e293b; --panel2: #334155;
+    --text: #e2e8f0; --muted: #94a3b8;
+    --accent: #38bdf8; --good: #4ade80; --warn: #facc15; --bad: #f87171;
+    --border: #334155;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+    background: var(--bg); color: var(--text); padding: 32px;
+  }
+  .wrap { max-width: 1100px; margin: 0 auto; }
+  header {
+    display: flex; justify-content: space-between; align-items: baseline;
+    margin-bottom: 24px; flex-wrap: wrap; gap: 8px;
+  }
+  h1 { font-size: 28px; font-weight: 700; }
+  h1 span { color: var(--accent); }
+  .meta { color: var(--muted); font-size: 13px; line-height: 1.6; text-align: right; }
+  .error {
+    background: #7f1d1d; border: 1px solid var(--bad); color: #fecaca;
+    padding: 14px 16px; border-radius: 8px; margin-bottom: 20px;
+  }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; margin-bottom: 24px; }
+  .card { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 18px; }
+  .card .label { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .05em; }
+  .card .value { font-size: 30px; font-weight: 700; margin-top: 6px; }
+  .card .sub { color: var(--muted); font-size: 12px; margin-top: 4px; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+  @media (max-width: 800px) { .grid2 { grid-template-columns: 1fr; } }
+  .panel { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 18px; }
+  .panel h2 { font-size: 15px; margin-bottom: 12px; color: var(--accent); }
+  .panel ol, .panel ul { list-style-position: inside; color: var(--text); }
+  li { padding: 4px 0; font-size: 14px; }
+  li .num { color: var(--accent); font-weight: 600; }
+  .delta-up { color: var(--good); }
+  .delta-down { color: var(--bad); }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); }
+  th { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .04em; }
+  tr:hover td { background: var(--panel2); }
+  .table-scroll { max-height: 480px; overflow-y: auto; border: 1px solid var(--border); border-radius: 10px; }
+  .pill { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 600; }
+  .pill.good { background: rgba(74,222,128,.15); color: var(--good); }
+  .pill.warn { background: rgba(250,204,21,.15); color: var(--warn); }
+  .pill.bad { background: rgba(248,113,113,.15); color: var(--bad); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1>Brighton <span>Bikeshare</span> Dashboard</h1>
+    <div class="meta">
+      {% if error %}{% else %}{% if snapshot_time %}Snapshot: {{ snapshot_time }}<br>{% endif %}{% endif %}
+      History snapshots stored: {{ history_snapshots }}
+    </div>
+  </header>
+
+  {% if error %}
+    <div class="error">
+      <strong>ETL failed:</strong> {{ error }}<br>
+      Check the live GBFS feed URL and network connectivity, then refresh.
+    </div>
+  {% elif analysis %}
+
+    <div class="cards">
+      <div class="card"><div class="label">Stations</div><div class="value">{{ analysis.n_stations }}</div><div class="sub">live in network</div></div>
+      <div class="card"><div class="label">Bikes available</div><div class="value">{{ analysis.total_bikes }}</div><div class="sub">{{ analysis.n_empty }} empty station(s)</div></div>
+      <div class="card"><div class="label">Docks available</div><div class="value">{{ analysis.total_docks }}</div><div class="sub">{{ analysis.n_full }} full station(s)</div></div>
+      <div class="card"><div class="label">Utilisation</div><div class="value">{{ analysis.utilisation }}%</div><div class="sub">of {{ analysis.total_capacity }} total points</div></div>
+    </div>
+
+    <div class="grid2">
+      <div class="panel">
+        <h2>Most bikes available</h2>
+        <ol>
+          {% for s in analysis.top_bikes %}
+          <li>{{ s.name }} <span class="num">{{ s.num_bikes_available }}</span></li>
+          {% endfor %}
+        </ol>
+      </div>
+      <div class="panel">
+        <h2>Most free docks</h2>
+        <ol>
+          {% for s in analysis.top_docks %}
+          <li>{{ s.name }} <span class="num">{{ s.num_docks_available }}</span></li>
+          {% endfor %}
+        </ol>
+      </div>
+    </div>
+
+    {% if analysis.change %}
+    <div class="grid2">
+      <div class="panel">
+        <h2>Biggest gains since last snapshot</h2>
+        <ul>
+          {% for s in analysis.change.gained %}
+          <li>{{ s.name }} <span class="num delta-up">+{{ s.delta }}</span></li>
+          {% endfor %}
+        </ul>
+      </div>
+      <div class="panel">
+        <h2>Biggest losses since last snapshot</h2>
+        <ul>
+          {% for s in analysis.change.lost %}
+          <li>{{ s.name }} <span class="num delta-down">{{ s.delta }}</span></li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+    {% endif %}
+
+    <div class="panel">
+      <h2>All stations</h2>
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Station</th><th>ID</th><th>Bikes</th><th>Docks</th>
+              <th>Utilisation</th><th>Last reported</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for r in analysis.rows %}
+            <tr>
+              <td>{{ r.name }}</td>
+              <td>{{ r.station_id }}</td>
+              <td>{{ r.num_bikes_available }}</td>
+              <td>{{ r.num_docks_available }}</td>
+              <td>
+                {% if r.utilisation_pct == 0 %}
+                  <span class="pill bad">0%</span>
+                {% elif r.utilisation_pct < 34 %}
+                  <span class="pill warn">{{ r.utilisation_pct }}%</span>
+                {% elif r.utilisation_pct > 80 %}
+                  <span class="pill bad">{{ r.utilisation_pct }}%</span>
+                {% else %}
+                  <span class="pill good">{{ r.utilisation_pct }}%</span>
+                {% endif %}
+              </td>
+              <td>{{ r.last_reported_readable }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  {% endif %}
+
+</div>
+</body>
+</html>
