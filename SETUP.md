@@ -9,6 +9,7 @@ Both share one thing: an OpenRouter API key, read at runtime from `OPENROUTER.tx
 
 ---
 
+
 ## 0. Prereqs
 
 Everything is standard, so there's little to install:
