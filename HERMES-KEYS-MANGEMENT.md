@@ -1,5 +1,9 @@
 # Hermes Agent: OpenRouter API Key (PowerShell)
 
+CLAUDE
+
+$env:ANTHROPIC_API_KEY = <"API-KEY>"
+
 ## Quick reference
 
 ```powershell
