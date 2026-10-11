@@ -627,11 +627,19 @@
       <h3>Function composition is not new</h3>
       <p>For me the cleanest mental model is the <code>function</code> frame:</p>
       <pre>input -&gt; function(input) -&gt; output -&gt; function(output) -&gt; output2</pre>
+      <figure class="fig-wide">
+        <img src="./images/  <figure class=" fig-wide">
+        <img src="./images/100_INPUT_OUTPUT.png"
+          alt="Reflection pattern — the output of one agent becomes the input of the next">
+      </figure>
+      </figure>
       <p>And that "function" can be an agent, just as easily as it can be a class or a regular method in your app. Agent
         calls one agent, hands it output, waits for the next. No different to passing objects between Classes in a
         codebase. The first pass writes code with a system prompt; the next pass is a <em>reviewer</em> function that
         takes that output and produces the next version. Processes and classes, but with an LLM in the middle of the
         pipe.</p>
+
+
 
       <h3>Why temp = 0 is not deterministic</h3>
       <p>One small thing I want to flag early (there's a longer note in the repo,
@@ -699,10 +707,10 @@
             for tools and stops when it decides it has a final answer (with a max-iteration guard so we never loop
             forever). The model directs the flow. That's the autonomy point from earlier.</p>
 
-                      <figure class="fig-wide">
-                        <img src="./images/email04-tool-calling.png" alt="Demo 3 screenshot — tool calling and the agent loop">
-                      </figure>
-                    </div>
+          <figure class="fig-wide">
+            <img src="./images/email04-tool-calling.png" alt="Demo 3 screenshot — tool calling and the agent loop">
+          </figure>
+        </div>
 
         <div class="demo">
           <span class="step">Demo 4 · Adding History</span>
@@ -713,12 +721,12 @@
             <code>localStorage</code>, so a refresh keeps the chat.
           </p>
           <p>The honest cost is right in the console: more history = more tokens = more money. Memory engineering is
-                      really token budget management.</p>
+            really token budget management.</p>
 
-                    <figure class="fig-wide">
-                      <img src="./images/email02-folow-up.png" alt="Demo 4 screenshot — adding history (memory)">
-                    </figure>
-                  </div>
+          <figure class="fig-wide">
+            <img src="./images/email02-folow-up.png" alt="Demo 4 screenshot — adding history (memory)">
+          </figure>
+        </div>
 
       </div>
     </section>
