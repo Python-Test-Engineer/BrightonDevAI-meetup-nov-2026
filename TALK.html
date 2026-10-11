@@ -633,20 +633,7 @@
           alt="Reflection pattern — the output of one agent becomes the input of the next">
       </figure>
       </figure>
-      <p>And that "function" can be an agent, just as easily as it can be a class or a regular method in your app. Agent
-        calls one agent, hands it output, waits for the next. No different to passing objects between Classes in a
-        codebase. The first pass writes code with a system prompt; the next pass is a <em>reviewer</em> function that
-        takes that output and produces the next version. Processes and classes, but with an LLM in the middle of the
-        pipe.</p>
 
-
-
-      <h3>Why temp = 0 is not deterministic</h3>
-      <p>One small thing I want to flag early (there's a longer note in the repo,
-        <code>why_temp_equal_zero_not_deterministic.md</code>): dropping <code>temperature</code> to zero does
-        <strong>not</strong> make the model deterministic. Don't build tests on that assumption — the sampling and
-        hardware still introduce variety.
-      </p>
     </section>
     <br><br><br><br><br><br><br><br>
     <hr class="divider">
