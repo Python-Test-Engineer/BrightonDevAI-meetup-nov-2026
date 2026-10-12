@@ -58,3 +58,9 @@ A Claude Code–powered data intelligence environment built around a FastAPI CSV
 https://www.youtube.com/watch?v=C_GG5g38vLU
 
 "Harnesses in AI: A Deep Dive" — a conference talk by Tejas Kumar (IBM) on the concept of the AI/agent harness: everything around the model (tool registry, context management, guardrails, the agent loop, and a verify step) that grounds it in a stable environment. He live-builds a bare-bones "poor man's harness" for a browser-use agent using a deliberately weak, cheap model, and shows the harness radically improving its performance — all without changing the model or a single prompt word.
+
+## Build Agentic Workforce
+
+https://www.youtube.com/watch?v=1OLrT3dEzhA
+
+"Building AI Agents from Scratch | Full Course" (The Neural Maze) — a full-length course that constructs AI agents from the ground up, covering the agentic loop, tool use, and how to assemble a working agent step by step. A solid foundation for then composing those individual agents into a coordinated workforce.
