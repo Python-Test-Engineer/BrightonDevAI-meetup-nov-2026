@@ -102,6 +102,36 @@
     border-left: 4px solid #2196F3;
  }
 
+ /* ─── Hero block for the FINAL answer (loop end) ─────────────── */
+ .final-answer {
+    margin-top: 10px;
+    padding: 22px;
+    border-radius: 8px;
+    border: 3px solid #00875a;
+    border-left: 8px solid #00875a;
+    background: linear-gradient(135deg, #e8f5e9 0%, #d7f7e3 100%);
+    box-shadow: 0 4px 16px rgba(0, 135, 90, 0.25);
+    font-size: 18px;
+    line-height: 1.6;
+    color: #0b3d2e;
+ }
+ .final-answer .final-tag {
+    display: inline-block;
+    background: #00875a;
+    color: white;
+    font-weight: 800;
+    font-size: 13px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    border-radius: 4px;
+    padding: 4px 12px;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 6px rgba(0, 135, 90, 0.35);
+ }
+ .final-answer .final-body {
+    font-size: 19px;
+ }
+
  .tool-call {
     background: #fff3e0;
     border-left: 4px solid #FF9800;

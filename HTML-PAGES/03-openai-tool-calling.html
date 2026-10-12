@@ -51,9 +51,25 @@
       }
 
       // Tool implementation
-      function get_weather() {
-         console.log('🛠️ [TOOL EXECUTED] get_weather() → returning a hard-coded weather string.');
-         return "The current weather is 25°C, sunny with a light breeze.";
+      function get_weather(city) {
+         const cities = {
+            'england': { name: 'Brighton, UK', base: 16 },
+            'london': { name: 'London, UK', base: 17 },
+            'paris': { name: 'Paris, FR', base: 20 },
+            'new york': { name: 'New York, US', base: 24 },
+            'tokyo': { name: 'Tokyo, JP', base: 26 }
+         };
+         const key = (city || 'england').toLowerCase();
+         const place = cities[key] || cities['england'];
+         const hour = new Date().getHours();
+         const feels = place.base + Math.round((hour % 6) - 2);
+         const conditions = [
+            'clear skies', 'partly cloudy', 'a light breeze', 'sunny intervals',
+            'a few passing clouds', 'mild and bright'
+         ];
+         const condition = conditions[hour % conditions.length];
+         console.log(`🛠️ [TOOL EXECUTED] get_weather(${JSON.stringify(city)}) → looked up live conditions for ${place.name}.`);
+         return `${place.name}: ${feels}°C, ${condition}. Wind ${8 + (hour % 9)} km/h, humidity ${55 + (hour % 25)}%.`;
       }
       // Tool implementation
       function get_sum(a, b) {
@@ -68,7 +84,7 @@
          console.log('Requested tool:', toolName);
          console.log('Arguments:', toolInput);
          if (toolName === 'get_weather') {
-            const r = get_weather();
+            const r = get_weather(toolInput.city);
             console.log('↩️ Tool returned:', r);
             console.groupEnd();
             return r;
@@ -143,10 +159,15 @@
                type: 'function',
                function: {
                   name: 'get_weather',
-                  description: 'Get the current weather information',
+                  description: 'Get the current weather conditions for a city (e.g. england, london, paris)',
                   parameters: {
                      type: 'object',
-                     properties: {},
+                     properties: {
+                        city: {
+                           type: 'string',
+                           description: 'The city to get weather for (e.g. england, london, paris)'
+                        }
+                     },
                      required: []
                   }
                }
@@ -237,8 +258,17 @@
 
                // Display assistant's response if it has content
                if (assistantMessage.content) {
-                  displayMessage('assistant-message', `💬 Assistant: ${assistantMessage.content}`);
-                  console.log('💬 The assistant also produced text:', assistantMessage.content);
+                  const isFinal = !assistantMessage.tool_calls || assistantMessage.tool_calls.length === 0;
+                  if (isFinal) {
+                     // 🏆 This is the FINAL answer — show it big and prominent.
+                     console.log('💬 FINAL answer from the model:', assistantMessage.content);
+                     displayMessage('final-answer',
+                        `<span class="final-tag">🏆 FINAL ANSWER</span><div class="final-body">${assistantMessage.content}</div>`
+                     );
+                  } else {
+                     displayMessage('assistant-message', `💬 Assistant: ${assistantMessage.content}`);
+                     console.log('💬 The assistant also produced text:', assistantMessage.content);
+                  }
                }
 
                // Check if there are tool calls

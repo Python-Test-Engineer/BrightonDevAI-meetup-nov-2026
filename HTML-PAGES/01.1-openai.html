@@ -21,7 +21,7 @@
       data-form-type="other">
    <input type="text" id="prompt" placeholder="Enter your prompt" value="Capital of England?">
 
-   <button id="sendBtn" type="submit">Send Request</button>
+   <button id="sendBtn" type="button">Send Request</button>
 
    <br>
    <div id="result"></div>
@@ -43,10 +43,28 @@
          console.warn('⚠️ No OPENROUTER_API_KEY found in config.js — type one into the field before sending.');
       }
       console.log('🤖 Model that will be used:', (typeof OPENROUTER_MODEL !== 'undefined' ? OPENROUTER_MODEL : '(not loaded yet)'));
-      console.log('🌐 Endpoint that will be called:', (typeof OPENROUTER_API_URL !== 'undefined' ? OPENROUTER_API_URL : '(not loaded yet)'));
+            console.log('🌐 Endpoint that will be called:', (typeof OPENROUTER_API_URL !== 'undefined' ? OPENROUTER_API_URL : '(not loaded yet)'));
 
-      document.getElementById('sendBtn').addEventListener('click', async () => {
-         console.log('%c👆 Send button clicked', 'color:#0b7a5c;font-weight:bold');
+            // ─── Audience narration + raw-payload helpers ───
+            function explain(badge, summary, detailHtml) {
+               const r = document.getElementById('result');
+               const box = document.createElement('div');
+               box.className = 'explain';
+               box.innerHTML = '<span class="badge">' + badge + '</span><span class="summary">' + summary + '</span>' + (detailHtml ? '<div class="detail">' + detailHtml + '</div>' : '');
+               r.appendChild(box);
+            }
+            function showRaw(label, obj) {
+               const r = document.getElementById('result');
+               const d = document.createElement('details');
+               d.className = 'raw';
+               d.innerHTML = '<summary>▸ ' + label + ' — click to expand</summary><pre></pre>';
+               d.querySelector('pre').textContent = JSON.stringify(obj, null, 2);
+               r.appendChild(d);
+            }
+
+      document.getElementById('sendBtn').addEventListener('click', async (event) => {
+               event.preventDefault(); // never let this trigger a page navigation/reload
+               console.log('%c👆 Send button clicked', 'color:#0b7a5c;font-weight:bold');
          console.log('⏳ Awaiting window.openRouterReady — this promise resolves once the key + model are read from OPENROUTER.txt.');
          await window.openRouterReady; // key + model come from OPENROUTER.txt
          console.log('✅ openRouterReady resolved — config is available.');
@@ -83,64 +101,73 @@
             // 📦 This array is the "conversation" we send. Chat models are trained on
             //    role-tagged messages: 'system' = instructions, 'user' = the question.
             const requestMessages = [
-               { role: 'system', content: system_prompt }, // Defines how the AI agent should behave (its "personality" and rules).
-               { role: 'user', content: prompt } // The user's input/query for the agent to respond to.
-            ];
-            console.group('📤 Building the request');
-            console.log('Roles matter! Models understand "system" (rules) and "user" (question).');
-            console.log('Messages being sent:', requestMessages);
-            console.log('⚙️ max_tokens: 1024  (caps how long the answer can be; ~1 token ≈ 4 characters)');
-            console.log('🎲 temperature: 0.7  (0 = deterministic, 2 = wild; 0.7 is a natural balance)');
-            console.groupEnd();
+                           { role: 'system', content: system_prompt }, // Defines how the AI agent behaves (its "personality" and rules).
+                           { role: 'user', content: prompt } // The user's input/query for the agent to respond to.
+                        ];
+                        explain('STEP 1/3', 'We build the request — a list of role-tagged messages.',
+                           'Chat models are trained on a conversation, not one string. So we hand over an array with <code>role</code> + <code>content</code>. <code>system</code> (from system_prompt above) sets the personality and rules; <code>user</code> is the actual question. <b>This is the ONLY thing the model ever sees.</b>');
+                        showRaw('What we send — the "messages" array', requestMessages);
 
-            console.log('🌐 Sending POST to', OPENROUTER_API_URL, '…');
-            const t0 = performance.now();
-            const response = await fetch(OPENROUTER_API_URL, {
-               method: 'POST',
-               headers: {
-                  'Content-Type': 'application/json', // Tells the server we're sending JSON data.
-                  'Authorization': `Bearer ${apiKey}`, // Authenticates our request using the OpenRouter API key.
-                  ...OPENROUTER_HEADERS // Optional OpenRouter attribution headers.
-               },
-               body: JSON.stringify({
-                  model: OPENROUTER_MODEL, // OpenRouter model id (from OPENROUTER.txt, e.g. 'deepseek-v4.1-flash').
-                  messages: requestMessages, // Models are trained to understand these roles to generate appropriate responses so we use the same format.
+                        console.group('📤 Building the request');
+                        console.log('Roles matter! Models understand "system" (rules) and "user" (question).');
+                        console.log('Messages being sent:', requestMessages);
+                        console.log('⚙️ max_tokens: 1024  (caps how long the answer can be; ~1 token ≈ 4 characters)');
+                        console.log('🎲 temperature: 0.7  (0 = deterministic, 2 = wild; 0.7 is a natural balance)');
+                        console.groupEnd();
 
-                  max_tokens: 1024, // Limits the response length to prevent excessive output. A token in LLM (Large Language Model) terminology is the basic unit of text that the model processes. Think of it as the fundamental "chunk" that the AI reads and generates. You can typically estimate roughly 1 token ≈ 4 characters or 0.75 words in English, though this varies significantly based on the text.
+                        console.log('🌐 Sending POST to', OPENROUTER_API_URL, '…');
+                        const t0 = performance.now();
+                        const requestBody = {
+                           model: OPENROUTER_MODEL,
+                           messages: requestMessages,
+                           max_tokens: 1024,
+                           temperature: 0.7
+                        };
+                        const response = await fetch(OPENROUTER_API_URL, {
+                           method: 'POST',
+                           headers: {
+                              'Content-Type': 'application/json', // Tells the server we're sending JSON data.
+                              'Authorization': `Bearer ${apiKey}`, // Authenticates our request using the OpenRouter API key.
+                              ...OPENROUTER_HEADERS // Optional OpenRouter attribution headers.
+                           },
+                           body: JSON.stringify(requestBody)
+                        });
+                        explain('STEP 2/3', 'One POST to the API. Nothing else to it.',
+                           'We send the array plus two simple knobs: <code>max_tokens:1024</code> (length cap) and <code>temperature:0.7</code> (randomness). OpenRouter routes it to the model and streams back JSON. This step has <b>no memory on the server side</b> — nothing persists between clicks.');
+                        showRaw('The full REQUEST body', requestBody);
+                        console.log('📡 Response received in', Math.round(performance.now() - t0) + 'ms');
+                        console.log('🔢 HTTP status:', response.status, response.statusText, response.ok ? '✅' : '⚠️');
 
-                  temperature: 0.7 // Controls randomness: 0.0 = very predictable/deterministic, 2.0 = very creative/random. 0.7 provides a good balance for natural, varied responses without being too unpredictable. !!! We will look at TEMPERATURE in another video...
-               })
-            });
-            console.log('📡 Response received in', Math.round(performance.now() - t0) + 'ms');
-            console.log('🔢 HTTP status:', response.status, response.statusText, response.ok ? '✅' : '⚠️');
+                        const data = await response.json();
+                        console.log('API Response:', data);
+                        showRaw('The RESPONSE body we get back', data);
 
-            const data = await response.json();
-            console.log('API Response:', data);
+                        // ******************** AI BIT ********************
 
-            // ******************** AI BIT ********************
+                        // NB No mememory every call is stateless
+                        let output = "";
 
-            // NB No mememory every call is stateless
-            let output = "";
-
-            if (data.error) {
-               // OpenRouter error responses (bad key, bad model, rate limit...) have NO `choices`.
-               console.error('❌ OpenRouter returned an error:', data.error.message);
-               resultDiv.innerHTML = `<p style="color: red;">Error: ${data.error.message}</p>`;
-            } else if (!data.choices || !data.choices[0]) {
-               console.warn('⚠️ Response had no "choices" array — check the console for the raw payload.');
-               resultDiv.innerHTML = `<p style="color: red;">Unexpected response from OpenRouter (no choices). Check the console.</p>`;
-            } else {
-               const msg = data.choices[0].message.content; // We can drill down for the content of the first message choice to get the 'answer'.
-               console.group('🔎 Reading the answer out of the response');
-               console.log('Path taken: data.choices[0].message.content');
-               console.log('🔚 Finish reason:', data.choices[0].finish_reason, '(why the model stopped)');
-               if (data.usage) {
-                  console.log('🧮 Token usage:', data.usage, '(prompt + completion = total billed)');
-               }
-               console.log('💬 Answer:', msg);
-               console.groupEnd();
-               resultDiv.innerHTML = `<p><strong>Response:</strong></p><p>${output + '<br>' + msg}</p>`;
-            }
+                        if (data.error) {
+                           // OpenRouter error responses (bad key, bad model, rate limit...) have NO `choices`.
+                           console.error('❌ OpenRouter returned an error:', data.error.message);
+                           resultDiv.innerHTML = `<p style="color: red;">Error: ${data.error.message}</p>`;
+                        } else if (!data.choices || !data.choices[0]) {
+                           console.warn('⚠️ Response had no "choices" array — check the console for the raw payload.');
+                           resultDiv.innerHTML = `<p style="color: red;">Unexpected response from OpenRouter (no choices). Check the console.</p>`;
+                        } else {
+                           const msg = data.choices[0].message.content; // We can drill down for the content of the first message choice to get the 'answer'.
+                           console.group('🔎 Reading the answer out of the response');
+                           console.log('Path taken: data.choices[0].message.content');
+                           console.log('🔚 Finish reason:', data.choices[0].finish_reason, '(why the model stopped)');
+                           if (data.usage) {
+                              console.log('🧮 Token usage:', data.usage, '(prompt + completion = total billed)');
+                           }
+                           console.log('💬 Answer:', msg);
+                           console.groupEnd();
+                           explain('STEP 3/3', 'Drill into <code>data.choices[0].message.content</code> — that is the answer.',
+                              'The model wraps its reply in nested JSON. We follow the path <code>choices → 0 → message → content</code> to pull out the text. <code>finish_reason</code> tells us why it stopped, and <code>usage</code> shows the token bill. <b>That is the entire "hello world" of LLM APIs.</b>');
+                           resultDiv.innerHTML = resultDiv.innerHTML + `<p><strong>Response:</strong></p><p>${output + '<br>' + msg}</p>`;
+                        }
          } catch (error) {
             console.error('💥 Network/parse error during fetch:', error);
             resultDiv.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
