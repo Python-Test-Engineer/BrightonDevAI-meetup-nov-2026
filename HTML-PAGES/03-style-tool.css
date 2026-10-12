@@ -89,8 +89,6 @@
     border-left: 4px solid #007bff;
     border-radius: 4px;
     min-height: 50px;
-    max-height: 600px;
-    overflow-y: auto;
  }
 
  .message {
@@ -144,4 +142,61 @@
     color: #2e7d32;
     margin-bottom: 5px;
  }
+
+ /* ─── Audience-facing narration & raw payload styles ─────────────── */
+ .explain {
+    background: #eef7fb;
+    border-left: 4px solid #0097a7;
+    font-family: 'Raleway', sans-serif;
+    font-size: 14px;
+    color: #0d3b42;
+ }
+ .explain .badge {
+    display: inline-block;
+    background: #0097a7;
+    color: white;
+    border-radius: 4px;
+    padding: 1px 8px;
+    margin-right: 8px;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+ }
+ .explain .summary {
+    font-weight: 700;
+    display: block;
+    margin-top: 4px;
+ }
+ .explain .detail {
+    color: #276a73;
+    margin-top: 6px;
+    line-height: 1.5;
+ }
+ /* Dark monospace code block for raw payloads */
+ details.raw {
+    margin: 8px 0 4px;
+    border: 1px solid #cde;
+    border-radius: 4px;
+    background: #1e242b;
+ }
+ details.raw > summary {
+    cursor: pointer;
+    padding: 8px 12px;
+    color: #7fd4e8;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    user-select: none;
+ }
+ details.raw > pre {
+    margin: 0;
+    padding: 12px;
+    background: #14181d;
+    color: #9ce3b5;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    line-height: 1.5;
+    white-space: pre-wrap;
+       word-break: break-word;
+       border-top: 1px solid #2c353f;
+    }
 
