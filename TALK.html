@@ -59,13 +59,65 @@
       }
     }
 
+    /* ---------- nav ---------- */
+    nav.top {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 500;
+      display: flex;
+      align-items: center;
+      flex-wrap: nowrap;
+      gap: 4px;
+      background: rgba(250, 249, 245, .92);
+      -webkit-backdrop-filter: blur(8px);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+      padding: 10px 28px;
+    }
+
+    nav.top .brand {
+      font-family: var(--serif);
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--clay-strong);
+      margin-right: 18px;
+      white-space: nowrap;
+    }
+
+    nav.top a {
+      font-family: var(--mono);
+      font-size: 16px;
+      letter-spacing: .5px;
+      color: var(--muted);
+      padding: 7px 12px;
+      border-radius: 8px;
+      white-space: nowrap;
+    }
+
+    nav.top a:hover {
+      color: var(--clay-strong);
+      background: var(--clay-soft);
+      text-decoration: none;
+    }
+
+    nav.top a .n {
+      color: var(--clay);
+      margin-right: 5px;
+    }
+
+    /* anchors land clear of the fixed nav */
+    section {
+      scroll-margin-top: 72px;
+    }
+
     /* ---------- hero ---------- */
     header.hero {
-      padding: 110px 24px 70px;
+      padding-top: 150px;
       text-align: center;
       position: relative;
     }
-
     .eyebrow {
       display: inline-block;
       font-family: var(--mono);
@@ -515,6 +567,16 @@
 
 <body>
 
+  <nav class="top">
+    <span class="brand">BrightonDev.ai</span>
+    <a href="#pitch"><span class="n">01</span>Pitch</a>
+    <a href="#moment"><span class="n">02</span>Moment</a>
+    <a href="#blocks"><span class="n">03</span>Building blocks</a>
+    <a href="#demos"><span class="n">04</span>Demos</a>
+    <a href="#engineering"><span class="n">05</span>Engineering</a>
+    <a href="#leave"><span class="n">06</span>Leave-behinds</a>
+  </nav>
+
   <header class="hero">
     <span class="eyebrow">BrightonDev.ai Meetup</span>
     <h1>AI Agents<br><span class="grad">Demystified</span> and Simplified</h1>
@@ -535,7 +597,7 @@
   <main class="wrap">
 
     <!-- ============ PITCH ============ -->
-    <section>
+    <section id="pitch">
       <h2><span class="num">01</span>The one-line pitch</h2>
       <p><strong>AI Agents are just code making a REST API call</strong> — admittedly, a very magical API. Pull away the
         hype and an agent is a <code>fetch</code> (a POST request with a JSON payload) wrapped in a loop, with some
@@ -581,7 +643,7 @@
     <hr class="divider">
 
     <!-- ============ MOMENT ============ -->
-    <section>
+    <section id="moment">
       <h2><span class="num">02</span>My take on the AI agent moment</h2>
 
       <p>Three things were on my mind as I put this talk together:</p>
@@ -611,7 +673,7 @@
     <hr class="divider">
     <br><br><br><br><br><br><br><br>
     <!-- ============ BUILDING BLOCKS ============ -->
-    <section>
+    <section id="blocks">
       <h2><span class="num">03</span>History · Context · Looping · Tools</h2>
       <p>I keep four words pinned to the front of my mind, because every agent, however fancy, is built from them:</p>
       <ul class="building-blocks">
@@ -639,7 +701,7 @@
     <hr class="divider">
 
     <!-- ============ DEMOS ============ -->
-    <section>
+    <section id="demos">
       <h2><span class="num">04</span>Progression through the demos</h2>
       <p>I've written four tiny HTML pages — each one is just a <code>&lt;script&gt;</code> with a <code>fetch</code>.
         No build step, no framework, no SDK. They step up from "nothing" to "an agent," and each one adds one more of
@@ -721,7 +783,7 @@
     <hr class="divider">
 
     <!-- ============ ENGINEERING ============ -->
-    <section>
+    <section id="engineering">
       <h2><span class="num">05</span>PROMPT ENGINEERING → CONTEXT ENGINEERING → HARNESS ENGINEERING</h2>
       <p>I want to end on the point that changed how I think.</p>
       <p>Tools to build your own coding agent are not as scary as they sound. You need: list files, read a file, edit a
@@ -740,7 +802,7 @@
     <hr class="divider">
 
     <!-- ============ LEAVE-BEHINDS ============ -->
-    <section>
+    <section id="leave">
       <h2><span class="num">06</span>Leave-behinds</h2>
       <p>Everything tonight is in the repo — the HTML pages, the notes, links to the explainer videos, and my mini
         coding-agent for you to fork and build on.</p>
