@@ -1,2 +1,0 @@
-system_id,language,name,operator,url,phone_number,email,timezone,license_url,rental_apps.android.store_uri,rental_apps.android.discovery_uri,rental_apps.ios.store_uri,rental_apps.ios.discovery_uri
-beryl_brighton,en,Beryl,"205, The Frames, 1 Phipp St, London EC2A 4PS",https://beryl.cc/,02031965244,support@beryl.cc,Europe/London,https://cdla.dev/permissive-2-0/,https://play.google.com/store/apps/details?id=cc.beryl.basis,beryl-basis://,https://apps.apple.com/app/id1386768364,beryl-basis://

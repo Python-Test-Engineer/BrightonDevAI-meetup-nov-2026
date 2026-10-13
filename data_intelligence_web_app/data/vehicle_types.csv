@@ -1,5 +1,0 @@
-vehicle_type_id,form_factor,propulsion_type,name,max_range_meters
-beryl_bike,bicycle,human,Beryl Bike,
-bbe,bicycle,electric_assist,Beryl e-Bike,80000.0
-scooter,scooter,electric,Beryl e-Scooter,30000.0
-e_cargo_bike,cargo_bicycle,electric_assist,Beryl e-Cargo Bike,45000.0
