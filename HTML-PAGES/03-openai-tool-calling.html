@@ -27,7 +27,7 @@
       <div class="input-group">
          <label for="prompt">Your Prompt:</label>
          <input type="text" id="prompt" placeholder="e.g., What's the weather? or What is 5 + 3?"
-            value="What's the weather in England?" autocomplete="off">
+            value="What's the weather in Brighton?" autocomplete="off">
       </div>
 
       <button id="sendBtn">Send Request</button>
@@ -100,38 +100,38 @@
       }
 
       // Display message in result div
-            function displayMessage(type, content) {
-               const resultDiv = document.getElementById('result');
-               const msgDiv = document.createElement('div');
-               msgDiv.className = `message ${type}`;
-               msgDiv.innerHTML = content;
-               resultDiv.appendChild(msgDiv);
-               resultDiv.scrollTop = resultDiv.scrollHeight;
-            }
+      function displayMessage(type, content) {
+         const resultDiv = document.getElementById('result');
+         const msgDiv = document.createElement('div');
+         msgDiv.className = `message ${type}`;
+         msgDiv.innerHTML = content;
+         resultDiv.appendChild(msgDiv);
+         resultDiv.scrollTop = resultDiv.scrollHeight;
+      }
 
-            // ─── Audience narration (visible kicker + detail line, mirrors the console) ───
-            function explain(badge, summary, detailHtml) {
-               const resultDiv = document.getElementById('result');
-               const box = document.createElement('div');
-               box.className = 'message explain';
-               box.innerHTML =
-                  `<span class="badge">${badge}</span><span class="summary">${summary}</span>` +
-                  (detailHtml ? `<div class="detail">${detailHtml}</div>` : '');
-               resultDiv.appendChild(box);
-               resultDiv.scrollTop = resultDiv.scrollHeight;
-            }
+      // ─── Audience narration (visible kicker + detail line, mirrors the console) ───
+      function explain(badge, summary, detailHtml) {
+         const resultDiv = document.getElementById('result');
+         const box = document.createElement('div');
+         box.className = 'message explain';
+         box.innerHTML =
+            `<span class="badge">${badge}</span><span class="summary">${summary}</span>` +
+            (detailHtml ? `<div class="detail">${detailHtml}</div>` : '');
+         resultDiv.appendChild(box);
+         resultDiv.scrollTop = resultDiv.scrollHeight;
+      }
 
-            // Collapsible raw JSON block so the audience can inspect the exact wires.
-            function showRaw(label, obj) {
-               const resultDiv = document.getElementById('result');
-               const d = document.createElement('details');
-               d.className = 'raw';
-               d.innerHTML =
-                  `<summary>▸ ${label} — click to expand</summary><pre></pre>`;
-               d.querySelector('pre').textContent = JSON.stringify(obj, null, 2);
-               resultDiv.appendChild(d);
-               resultDiv.scrollTop = resultDiv.scrollHeight;
-            }
+      // Collapsible raw JSON block so the audience can inspect the exact wires.
+      function showRaw(label, obj) {
+         const resultDiv = document.getElementById('result');
+         const d = document.createElement('details');
+         d.className = 'raw';
+         d.innerHTML =
+            `<summary>▸ ${label} — click to expand</summary><pre></pre>`;
+         d.querySelector('pre').textContent = JSON.stringify(obj, null, 2);
+         resultDiv.appendChild(d);
+         resultDiv.scrollTop = resultDiv.scrollHeight;
+      }
 
       // Main function to handle tool calling loop
       async function handleToolCalling(apiKey, userPrompt) {
@@ -139,17 +139,17 @@
          resultDiv.innerHTML = '';
 
          const messages = [
-                     {
-                        role: 'user',
-                        content: userPrompt
-                     }
-                  ];
-                  console.group('📤 Starting a fresh conversation');
-                  console.log('The tool loop begins with just the user message:', messages);
-                  console.log('🔄 As tools run, we append the AI\'s tool request AND the tool result back into `messages`.');
-                  console.groupEnd();
-                  explain('STEP 1/4', 'We start with ONLY the user message — a plain chat.',
-                     'The conversation is a growing array of messages. Right now it simply holds your prompt. Later we will splice the model\'s tool request and the tool result back into this same array — that is what lets the next API call carry context.');
+            {
+               role: 'user',
+               content: userPrompt
+            }
+         ];
+         console.group('📤 Starting a fresh conversation');
+         console.log('The tool loop begins with just the user message:', messages);
+         console.log('🔄 As tools run, we append the AI\'s tool request AND the tool result back into `messages`.');
+         console.groupEnd();
+         explain('STEP 1/4', 'We start with ONLY the user message — a plain chat.',
+            'The conversation is a growing array of messages. Right now it simply holds your prompt. Later we will splice the model\'s tool request and the tool result back into this same array — that is what lets the next API call carry context.');
          // TOOLS
          // We must define tools in a certain way as the model is trained to expect tools in this format.
 
@@ -282,18 +282,18 @@
                      console.log('🔧 Tool Call:', toolName, toolInput);
                      console.log('🆔 tool_call_id:', toolCall.id, '(we must echo this back with the result)');
                      // Display tool call
-                                       displayMessage('tool-call',
-                                          `<span class="local-tag">⚙️ TOOL RUNS HERE — our code, not the LLM</span>🔧 <span class="tool-name">${toolName}</span><div class="tool-args">Args: ${JSON.stringify(toolInput)}</div>`
-                                       );
+                     displayMessage('tool-call',
+                        `<span class="local-tag">⚙️ TOOL RUNS HERE — our code, not the LLM</span>🔧 <span class="tool-name">${toolName}</span><div class="tool-args">Args: ${JSON.stringify(toolInput)}</div>`
+                     );
 
                      // ══ THE CRUX ══ The model asked  →  OUR code runs. ══
                      console.log('⚙️ Executing OUR function:', toolName, '← the model only chose the name.');
                      const toolResult = processToolCall(toolName, toolInput);
                      console.log('✅ Tool Result:', toolResult);
                      // Display tool result
-                                       displayMessage('tool-result',
-                                          `<span class="feedback-tag">🔁 SENDING BACK INTO THE SECOND CALL</span>✅ <span class="result-label">${toolName} result:</span> ${toolResult}`
-                                       );
+                     displayMessage('tool-result',
+                        `<span class="feedback-tag">🔁 SENDING BACK INTO THE SECOND CALL</span>✅ <span class="result-label">${toolName} result:</span> ${toolResult}`
+                     );
 
                      // Add tool result to messages
                      messages.push({
