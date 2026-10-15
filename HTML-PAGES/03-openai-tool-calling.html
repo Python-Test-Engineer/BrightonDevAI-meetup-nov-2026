@@ -282,18 +282,18 @@
                      console.log('🔧 Tool Call:', toolName, toolInput);
                      console.log('🆔 tool_call_id:', toolCall.id, '(we must echo this back with the result)');
                      // Display tool call
-                     displayMessage('tool-call',
-                        `🔧 <span class="tool-name">${toolName}</span><div class="tool-args">Args: ${JSON.stringify(toolInput)}</div>`
-                     );
+                                       displayMessage('tool-call',
+                                          `<span class="local-tag">⚙️ TOOL RUNS HERE — our code, not the LLM</span>🔧 <span class="tool-name">${toolName}</span><div class="tool-args">Args: ${JSON.stringify(toolInput)}</div>`
+                                       );
 
                      // ══ THE CRUX ══ The model asked  →  OUR code runs. ══
                      console.log('⚙️ Executing OUR function:', toolName, '← the model only chose the name.');
                      const toolResult = processToolCall(toolName, toolInput);
                      console.log('✅ Tool Result:', toolResult);
                      // Display tool result
-                     displayMessage('tool-result',
-                        `✅ <span class="result-label">${toolName} result:</span> ${toolResult}`
-                     );
+                                       displayMessage('tool-result',
+                                          `<span class="feedback-tag">🔁 SENDING BACK INTO THE SECOND CALL</span>✅ <span class="result-label">${toolName} result:</span> ${toolResult}`
+                                       );
 
                      // Add tool result to messages
                      messages.push({
