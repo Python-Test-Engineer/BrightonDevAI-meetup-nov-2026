@@ -50,7 +50,7 @@
 
          If you genuinely don't know something, say 'I don't know', but always check the conversation context first before saying this.
 
-         Convert markdown to HTML when needed so that output is properly formatted. Ensure there is a new line after each sentence.
+         Reply in plain text only. Do NOT include any HTML tags or markup. Ensure there is a new line after each sentence.
       `;
 
       let messages = [{ role: 'system', content: systemPrompt }];
@@ -74,6 +74,18 @@
          console.log('💾 Saved', messages.length, 'messages to localStorage key "chatHistory".');
       }
 
+      // Strip any HTML tags from text so the chat shows plain text, not raw markup.
+      // The render layer uses textContent, so un-stripped tags appear literally
+      // (e.g. "<p>Hello</p>" instead of "Hello").
+      function stripHtml(html) {
+         if (!html) return '';
+         const doc = new DOMParser().parseFromString(html, 'text/html');
+         // Turn block-level elements and <br> into line breaks before flattening to text.
+         doc.body.querySelectorAll('br').forEach(el => el.replaceWith('\n'));
+         doc.body.querySelectorAll('p,div,li,h1,h2,h3,h4,h5,h6,tr').forEach(el => el.append('\n'));
+         return (doc.body.textContent || '').replace(/\n{3,}/g, '\n\n').trim();
+      }
+
       // Render messages to the chat
       function renderMessages() {
          const messagesDiv = document.getElementById('messages');
@@ -82,7 +94,7 @@
          messages.slice(1).forEach(msg => { // Skip system message
             const msgDiv = document.createElement('div');
             msgDiv.className = `message ${msg.role}`;
-            msgDiv.textContent = msg.content;
+            msgDiv.textContent = msg.role === 'assistant' ? stripHtml(msg.content) : msg.content;
             messagesDiv.appendChild(msgDiv);
          });
       }
@@ -158,7 +170,9 @@
                console.log('🧹 Removed the "Thinking..." bubble.');
 
                // Add actual response
-               const assistantMessage = data.choices[0].message.content;
+               const rawReply = data.choices[0].message.content;
+               const assistantMessage = stripHtml(rawReply); // strip HTML tags from the model's reply
+               if (rawReply !== assistantMessage) console.log('🧽 Stripped HTML tags from the assistant reply.');
                console.log('💬 Assistant replied:', assistantMessage);
                messages.push({ role: 'assistant', content: assistantMessage });
                saveMessages();
