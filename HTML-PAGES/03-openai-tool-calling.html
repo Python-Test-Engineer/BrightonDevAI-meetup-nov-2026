@@ -29,15 +29,54 @@
          box-sizing: border-box;
          pointer-events: auto;
       }
+      .toast-controls {
+         position: sticky;
+         top: 0;
+         z-index: 5;
+         display: grid;
+         gap: 8px;
+         padding: 12px 16px;
+         border: 1px solid rgba(98, 217, 255, .35);
+         border-left: 6px solid #62d9ff;
+         border-radius: 12px;
+         color: #e8eef7;
+         background: rgba(12, 22, 33, .98);
+         box-shadow: 0 8px 26px rgba(0, 0, 0, .32);
+      }
+      .toast-control-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+      .toast-control-heading label {
+         display: inline-flex;
+         align-items: center;
+         gap: 9px;
+         color: #cdeeff;
+         font: 700 1rem 'JetBrains Mono', monospace;
+         letter-spacing: .08em;
+         text-transform: uppercase;
+      }
+      .toast-control-heading svg { width: 20px; height: 20px; fill: none; stroke: #62d9ff; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+      #toastDelayValue { color: #fff; font: 700 1.05rem 'JetBrains Mono', monospace; font-variant-numeric: tabular-nums; }
+      #toastDelay {
+         width: 100%;
+         height: 22px;
+         margin: 0;
+         accent-color: #62d9ff;
+         cursor: pointer;
+      }
+      #toastDelay:focus-visible { outline: 2px solid #62d9ff; outline-offset: 3px; }
+      .toast-delay-hint { color: #93a6ba; font: .78rem 'Raleway', sans-serif; }
       .toast {
          position: relative;
+         display: grid;
+         grid-template-columns: 52px minmax(0, 1fr);
+         align-items: start;
+         gap: 16px;
          font-family: 'Raleway', sans-serif;
-         background: rgba(15, 20, 30, 0.92);
+         background: linear-gradient(135deg, var(--toast-bg, #17212d), rgba(11, 16, 24, .98));
          color: #e8eef7;
-         border: 1px solid rgba(120, 220, 180, 0.35);
-         border-left: 8px solid #2ecc8f;
+         border: 1px solid var(--toast-border, rgba(176, 199, 229, .3));
+         border-left: 8px solid var(--toast-accent, #2ecc8f);
          border-radius: 18px;
-         padding: 24px 28px;
+         padding: 22px 24px;
          font-size: 1.7rem;
          line-height: 1.45;
          box-shadow: 0 12px 36px rgba(0,0,0,0.5);
@@ -45,6 +84,28 @@
          transform: translateX(40px);
          animation: toastIn 0.35s cubic-bezier(.2,.9,.3,1.2) forwards;
       }
+      .toast-icon {
+         display: grid;
+         place-items: center;
+         width: 52px;
+         height: 52px;
+         color: var(--toast-accent, #2ecc8f);
+         background: var(--toast-icon-bg, rgba(46, 204, 143, .12));
+         border: 1px solid var(--toast-border, rgba(176, 199, 229, .3));
+         border-radius: 12px;
+      }
+      .toast-icon svg {
+         display: block;
+         width: 30px;
+         height: 30px;
+         fill: none;
+         stroke: currentColor;
+         stroke-width: 1.8;
+         stroke-linecap: round;
+         stroke-linejoin: round;
+      }
+      .toast-content { min-width: 0; }
+      .toast-copy { overflow-wrap: anywhere; }
       .toast-clearable { padding-right: 72px; }
       .toast-clear {
          position: absolute;
@@ -75,17 +136,42 @@
          text-transform: uppercase;
          margin-bottom: 8px;
       }
-      /* direction-aware accent colour */
-      .toast.toast-client { border-left-color: #4aa8ff; }
-      .toast.toast-client .tt { color: #8cc9ff; }
-      .toast.toast-llm { border-left-color: #c07bff; }
-      .toast.toast-llm .tt { color: #d4adff; }
-      .toast.toast-local { border-left-color: #ffc24a; }
-      .toast.toast-local .tt { color: #ffd98a; }
-      .toast.toast-done { border-left-color: #2ecc8f; }
-      .toast.toast-done .tt { color: #7cf0bc; }
-      .toast.toast-error { border-left-color: #ff5d5d; }
-      .toast.toast-error .tt { color: #ff9a9a; }
+      /* Direction and event type each have their own color world. */
+      .toast.toast-client {
+         --toast-bg: #102b40;
+         --toast-border: rgba(74, 168, 255, .48);
+         --toast-accent: #4aa8ff;
+         --toast-icon-bg: rgba(74, 168, 255, .15);
+      }
+      .toast.toast-client .tt { color: #9bd5ff; }
+      .toast.toast-llm {
+         --toast-bg: #2a1d42;
+         --toast-border: rgba(192, 123, 255, .5);
+         --toast-accent: #c07bff;
+         --toast-icon-bg: rgba(192, 123, 255, .16);
+      }
+      .toast.toast-llm .tt { color: #dfbdff; }
+      .toast.toast-local {
+         --toast-bg: #3a2b16;
+         --toast-border: rgba(255, 194, 74, .5);
+         --toast-accent: #ffc24a;
+         --toast-icon-bg: rgba(255, 194, 74, .16);
+      }
+      .toast.toast-local .tt { color: #ffe09b; }
+      .toast.toast-done {
+         --toast-bg: #12372c;
+         --toast-border: rgba(46, 204, 143, .48);
+         --toast-accent: #2ecc8f;
+         --toast-icon-bg: rgba(46, 204, 143, .16);
+      }
+      .toast.toast-done .tt { color: #9bf3ca; }
+      .toast.toast-error {
+         --toast-bg: #421c25;
+         --toast-border: rgba(255, 93, 93, .5);
+         --toast-accent: #ff5d5d;
+         --toast-icon-bg: rgba(255, 93, 93, .15);
+      }
+      .toast.toast-error .tt { color: #ffb0b0; }
       @keyframes toastIn { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: translateX(0); } }
    </style>
 </head>
@@ -111,7 +197,19 @@
       <div id="result"></div>
    </div>
 
-   <div id="toastStack"></div>
+   <div id="toastStack">
+      <div class="toast-controls" role="group" aria-label="Presentation delay control">
+         <div class="toast-control-heading">
+            <label for="toastDelay">
+               <svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+               Audience delay
+            </label>
+            <output id="toastDelayValue" for="toastDelay">1.8 s</output>
+         </div>
+         <input id="toastDelay" type="range" min="500" max="10000" step="100" value="1800" aria-label="Delay between tool-calling stages">
+         <span class="toast-delay-hint">Pause before each next step · 0.5–10 seconds</span>
+      </div>
+   </div>
 
    <script>
       // 🚀 ======================= DEMO CONSOLE LOGGING =======================
@@ -188,17 +286,40 @@
       }
 
       // ─── Toast narration: on-screen popups for the LLM ⇄ client communication ───
-      const AUDIENCE_PAUSE_MS = 1800;
+      const audienceDelaySlider = document.getElementById('toastDelay');
+      const audienceDelayOutput = document.getElementById('toastDelayValue');
+      let audiencePauseMs = Number(audienceDelaySlider.value);
+
+      function updateAudiencePause() {
+         audiencePauseMs = Number(audienceDelaySlider.value);
+         const display = `${(audiencePauseMs / 1000).toFixed(1)} s`;
+         audienceDelayOutput.value = display;
+         audienceDelayOutput.textContent = display;
+         audienceDelaySlider.setAttribute('aria-valuetext', `${(audiencePauseMs / 1000).toFixed(1)} seconds`);
+      }
+
+      audienceDelaySlider.addEventListener('input', updateAudiencePause);
+      updateAudiencePause();
 
       function pauseForAudience() {
-         return new Promise(resolve => setTimeout(resolve, AUDIENCE_PAUSE_MS));
+         return new Promise(resolve => setTimeout(resolve, audiencePauseMs));
       }
+
+      const toastIcons = {
+         client: '<svg viewBox="0 0 24 24"><path d="M4 12h15M13 6l6 6-6 6"/></svg>',
+         llm: '<svg viewBox="0 0 24 24"><path d="M20 12H5m6 6-6-6 6-6"/></svg>',
+         local: '<svg viewBox="0 0 24 24"><path d="m8 8-4 4 4 4m8-8 4 4-4 4M14 5l-4 14"/></svg>',
+         done: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/></svg>',
+         error: '<svg viewBox="0 0 24 24"><path d="M12 3 22 20H2Z"/><path d="M12 9v5m0 3h.01"/></svg>'
+      };
 
       function showToast(kind, title, message, clearAll = false) {
          const stack = document.getElementById('toastStack');
          const t = document.createElement('div');
          t.className = `toast toast-${kind}`;
-         t.innerHTML = `<span class="tt">${title}</span>${message}`;
+         const icon = toastIcons[kind] || toastIcons.local;
+         t.innerHTML = `<span class="toast-icon" aria-hidden="true">${icon}</span>` +
+            `<div class="toast-content"><span class="tt">${title}</span><div class="toast-copy">${message}</div></div>`;
          stack.appendChild(t);
 
          if (clearAll) {
