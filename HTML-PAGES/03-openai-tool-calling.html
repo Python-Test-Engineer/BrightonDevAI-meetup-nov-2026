@@ -12,6 +12,82 @@
       rel="stylesheet">
    <link rel="stylesheet" href="03-style-tool.css">
    <script src="config.js"></script>
+   <style>
+      /* ───────── TOAST notification system ───────── */
+      #toastStack {
+         position: fixed;
+         top: 16px;
+         right: 16px;
+         z-index: 9999;
+         display: flex;
+         flex-direction: column;
+         gap: 16px;
+         width: calc(100vw - 32px);
+         max-width: 680px;
+         max-height: calc(100vh - 32px);
+         overflow-y: auto;
+         box-sizing: border-box;
+         pointer-events: auto;
+      }
+      .toast {
+         position: relative;
+         font-family: 'Raleway', sans-serif;
+         background: rgba(15, 20, 30, 0.92);
+         color: #e8eef7;
+         border: 1px solid rgba(120, 220, 180, 0.35);
+         border-left: 8px solid #2ecc8f;
+         border-radius: 18px;
+         padding: 24px 28px;
+         font-size: 1.7rem;
+         line-height: 1.45;
+         box-shadow: 0 12px 36px rgba(0,0,0,0.5);
+         opacity: 0;
+         transform: translateX(40px);
+         animation: toastIn 0.35s cubic-bezier(.2,.9,.3,1.2) forwards;
+      }
+      .toast-clearable { padding-right: 72px; }
+      .toast-clear {
+         position: absolute;
+         top: 12px;
+         right: 14px;
+         padding: 2px 8px;
+         border: 0;
+         border-radius: 8px;
+         background: transparent;
+         color: #e8eef7;
+         font: inherit;
+         font-size: 2.4rem;
+         line-height: 1;
+         cursor: pointer;
+         opacity: 0.8;
+      }
+      .toast-clear:hover,
+      .toast-clear:focus-visible {
+         opacity: 1;
+         outline: 2px solid rgba(140, 201, 255, 0.8);
+      }
+      .toast .tt {
+         display: block;
+         font-weight: 700;
+         font-family: 'JetBrains Mono', monospace;
+         font-size: 1.44rem;
+         letter-spacing: 0.05em;
+         text-transform: uppercase;
+         margin-bottom: 8px;
+      }
+      /* direction-aware accent colour */
+      .toast.toast-client { border-left-color: #4aa8ff; }
+      .toast.toast-client .tt { color: #8cc9ff; }
+      .toast.toast-llm { border-left-color: #c07bff; }
+      .toast.toast-llm .tt { color: #d4adff; }
+      .toast.toast-local { border-left-color: #ffc24a; }
+      .toast.toast-local .tt { color: #ffd98a; }
+      .toast.toast-done { border-left-color: #2ecc8f; }
+      .toast.toast-done .tt { color: #7cf0bc; }
+      .toast.toast-error { border-left-color: #ff5d5d; }
+      .toast.toast-error .tt { color: #ff9a9a; }
+      @keyframes toastIn { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: translateX(0); } }
+   </style>
 </head>
 
 <body>
@@ -34,6 +110,8 @@
 
       <div id="result"></div>
    </div>
+
+   <div id="toastStack"></div>
 
    <script>
       // 🚀 ======================= DEMO CONSOLE LOGGING =======================
@@ -107,6 +185,35 @@
          msgDiv.innerHTML = content;
          resultDiv.appendChild(msgDiv);
          resultDiv.scrollTop = resultDiv.scrollHeight;
+      }
+
+      // ─── Toast narration: on-screen popups for the LLM ⇄ client communication ───
+      const AUDIENCE_PAUSE_MS = 1800;
+
+      function pauseForAudience() {
+         return new Promise(resolve => setTimeout(resolve, AUDIENCE_PAUSE_MS));
+      }
+
+      function showToast(kind, title, message, clearAll = false) {
+         const stack = document.getElementById('toastStack');
+         const t = document.createElement('div');
+         t.className = `toast toast-${kind}`;
+         t.innerHTML = `<span class="tt">${title}</span>${message}`;
+         stack.appendChild(t);
+
+         if (clearAll) {
+            t.classList.add('toast-clearable');
+            const clearButton = document.createElement('button');
+            clearButton.type = 'button';
+            clearButton.className = 'toast-clear';
+            clearButton.setAttribute('aria-label', 'Remove all toasts');
+            clearButton.title = 'Remove all toasts';
+            clearButton.textContent = '×';
+            clearButton.addEventListener('click', () => stack.replaceChildren());
+            t.appendChild(clearButton);
+         }
+
+         stack.scrollTop = stack.scrollHeight;
       }
 
       // ─── Audience narration (visible kicker + detail line, mirrors the console) ───
@@ -214,14 +321,14 @@
             // ******************** AI BIT ********************
             try {
                console.log('🌐 POSTing conversation + tools to', OPENROUTER_API_URL);
-               const t0 = performance.now();
                const requestBody = {
                   model: OPENROUTER_MODEL,
                   messages: messages,
                   tools: tools,
                   tool_choice: 'auto'
                };
-               const response = await fetch(OPENROUTER_API_URL, {
+               const t0 = performance.now();
+               const responsePromise = fetch(OPENROUTER_API_URL, {
                   method: 'POST',
                   headers: {
                      'Content-Type': 'application/json',
@@ -230,6 +337,8 @@
                   },
                   body: JSON.stringify(requestBody)
                });
+               showToast('client', '↑ CLIENT → LLM', `POSTing the conversation (${messages.length} msg) + ${tools.length} tool schemas to <b>${OPENROUTER_MODEL}</b>…`);
+               const [response] = await Promise.all([responsePromise, pauseForAudience()]);
                console.log('📡 Response in', Math.round(performance.now() - t0) + 'ms | status', response.status, response.ok ? '✅' : '⚠️');
                console.log('ℹ️ tool_choice: "auto" means the model decides whether to call a tool or just answer.');
                explain(`Turn ${iterations} — sending #${messages.length} message(s) to the model`,
@@ -242,6 +351,7 @@
                // ******************** AI BIT ********************
                if (data.error) {
                   displayMessage('error', `❌ Error: ${data.error.message}`);
+                  showToast('error', '❌ LLM RESPONSE ERROR', `${data.error.message}`);
                   continueLoop = false;
                   console.log('API Error:', data.error);
                   break;
@@ -250,6 +360,14 @@
                const choice = data.choices[0];
                const assistantMessage = choice.message;
                console.log('finish_reason:', choice.finish_reason, '| tool_calls:', assistantMessage.tool_calls ? assistantMessage.tool_calls.map(tc => tc.function.name) : 'none');
+               const hasToolCalls = assistantMessage.tool_calls && assistantMessage.tool_calls.length > 0;
+               showToast('llm',
+                  hasToolCalls ? '↓ LLM → CLIENT · REQUEST' : '↓ LLM → CLIENT · ANSWER',
+                  hasToolCalls
+                     ? `Received in ${Math.round(performance.now() - t0)}ms — the model did <b>not</b> answer. It asked for: <b>${assistantMessage.tool_calls.map(tc => tc.function.name).join(', ')}</b>.`
+                     : `Received in ${Math.round(performance.now() - t0)}ms. fin: <b>${choice.finish_reason}</b>${assistantMessage.content ? ' — here is the reply.' : ''}`
+               );
+               await pauseForAudience();
                showRaw(`Turn ${iterations} — RESPONSE payload`, data);
 
                // Add assistant message to conversation
@@ -288,12 +406,16 @@
 
                      // ══ THE CRUX ══ The model asked  →  OUR code runs. ══
                      console.log('⚙️ Executing OUR function:', toolName, '← the model only chose the name.');
+                     showToast('local', '⚙ LOCAL · CLIENT WILL EXECUTE', `After this pause, this browser tab runs <b>${toolName}(${JSON.stringify(toolInput)})</b> — the LLM only requested it.`);
+                     await pauseForAudience();
                      const toolResult = processToolCall(toolName, toolInput);
                      console.log('✅ Tool Result:', toolResult);
                      // Display tool result
                      displayMessage('tool-result',
                         `<span class="feedback-tag">🔁 SENDING BACK INTO THE SECOND CALL</span>✅ <span class="result-label">${toolName} result:</span> ${toolResult}`
                      );
+                     showToast('client', '↑ CLIENT → LLM · RESULT READY', `The real <b>${toolName}</b> result is ready; the next request will send it back to the model after this brief pause.`);
+                     await pauseForAudience();
 
                      // Add tool result to messages
                      messages.push({
@@ -328,10 +450,12 @@
             } catch (error) {
                console.error('💥 Error inside the loop:', error);
                displayMessage('error', `❌ Error: ${error.message}`);
+               showToast('error', '❌ EXCEPTION', `${error.message}`);
                continueLoop = false;
             }
          }
          console.log('%c🏁 Tool loop finished after', 'font-weight:bold;color:#0b7a5c', iterations, 'iteration(s).');
+         showToast('done', '🏁 AGENT LOOP COMPLETE', `Done in <b>${iterations}</b> round-trip(s) — every tool result has been folded back in and the model gave its final reply.`, true);
       }
 
       // Event listener
