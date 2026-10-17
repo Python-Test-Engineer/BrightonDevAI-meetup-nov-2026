@@ -346,6 +346,10 @@
       font-style: italic;
     }
 
+    figcaption.big-caption {
+      font-size: 44px;
+    }
+
     .img-row {
       display: flex;
       gap: 18px;
@@ -679,10 +683,10 @@
       scroll-margin-top: 82px;
     }
 
-    section > p,
-    section > ol,
-    section > ul,
-    section > h3 {
+    section>p,
+    section>ol,
+    section>ul,
+    section>h3 {
       max-width: 980px;
     }
 
@@ -749,7 +753,7 @@
       background: var(--clay-soft);
       border-radius: 8px;
       font-family: var(--mono);
-      font-size: 16px;
+      font-size: 32px;
       font-weight: 600;
     }
 
@@ -874,10 +878,6 @@
       outline: 3px solid var(--clay);
       outline-offset: 3px;
     }
-
-
-
-
   </style>
 </head>
 
@@ -931,7 +931,8 @@
       <p>A harness adds context and memory around that loop — the parts that help it work reliably on a real task.</p>
       <p><em>We will explore these concepts in detail throughout the talk.</em></p>
 
-      <div class="agent-flow" role="img" aria-label="The user asks a question, the harness sends it to the model, the model may request a tool, and the harness runs that tool and returns its result to the model.">
+      <div class="agent-flow" role="img"
+        aria-label="The user asks a question, the harness sends it to the model, the model may request a tool, and the harness runs that tool and returns its result to the model.">
         <div class="node"><b>You</b><span>Ask a question</span></div>
         <span class="arrow" aria-hidden="true">→</span>
         <div class="node"><b>Harness</b><span>Sends the request</span></div>
@@ -940,7 +941,7 @@
         <span class="arrow" aria-hidden="true">→</span>
         <div class="node"><b>Your code</b><span>If requested, runs the tool and returns its result</span></div>
       </div>
-      <p class="flow-loop">Return tool results to the model; repeat until it gives a final answer.</p>
+      <p class="flow-loop">Return tool results to the model. <br>Repeat until it gives a final answer.</p>
 
       <figure class="fig-api">
         <img src="./01-REST-API.png" alt="A fetch to the API with a payload">
@@ -1027,7 +1028,7 @@
       <figure class="fig-wide">
         <img src="./images/100_INPUT_OUTPUT.png"
           alt="Reflection pattern — the output of one agent becomes the input of the next">
-        <figcaption>One agent's output becomes the next step's input.</figcaption>
+        <figcaption class="big-caption">One agent's output becomes the next step's input.</figcaption>
       </figure>
 
     </section>
@@ -1144,14 +1145,16 @@
         <li><b>List</b><span>See what files are in the working folder.</span></li>
         <li><b>Read</b><span>Load a file's contents into the conversation.</span></li>
         <li><b>Write</b><span>Create a new file or overwrite an existing one.</span></li>
-        <li><b>Edit</b><span>Replace one piece of an existing file, so the model doesn't rewrite the whole thing.</span></li>
+        <li><b>Edit</b><span>Replace one piece of an existing file, so the model doesn't rewrite the whole thing.</span>
+        </li>
       </ul>
       <div class="bash-card">
         <span class="bash-kicker">The only tool we really need</span>
         <b>Bash</b>
         <p>Every other tool is a shell command in disguise. <code>ls</code> lists, <code>cat</code> reads,
           <code>&gt;</code> writes and <code>sed</code> edits. Give the model a shell in the working folder and it
-          can do everything a coding agent does. The named tools just make each action easier to see in the logs.</p>
+          can do everything a coding agent does. The named tools just make each action easier to see in the logs.
+        </p>
       </div>
       <div class="card note">
         <span class="tag">Takeaway</span>
