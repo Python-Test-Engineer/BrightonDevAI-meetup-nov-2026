@@ -785,6 +785,43 @@
       font-size: 25px;
     }
 
+    .bash-card {
+      grid-column: 1 / -1;
+      background: var(--code-bg);
+      color: var(--code-ink);
+      border-radius: var(--radius);
+      padding: 34px 40px;
+      box-shadow: 0 6px 22px rgba(38, 38, 37, .18);
+    }
+
+    .bash-card .bash-kicker {
+      display: block;
+      font: 600 30px var(--mono);
+      letter-spacing: .8px;
+      text-transform: uppercase;
+      color: var(--rust);
+      margin-bottom: 8px;
+    }
+
+    .bash-card b {
+      display: block;
+      font-family: var(--serif);
+      font-size: 42px;
+      margin-bottom: 10px;
+    }
+
+    .bash-card p {
+      margin: 0;
+      font-size: 20px;
+      line-height: 1.5;
+      color: var(--code-ink);
+    }
+
+    .bash-card code {
+      background: rgba(255, 255, 255, .1);
+      color: var(--code-ink);
+    }
+
     .demos {
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 18px;
@@ -854,7 +891,8 @@
     <a href="#blocks"><span class="n">03</span>Building blocks</a>
     <a href="#demos"><span class="n">04</span>Demos</a>
     <a href="#engineering"><span class="n">05</span>Engineering</a>
-    <a href="#leave"><span class="n">06</span>Leave-behinds</a>
+    <a href="#minimal"><span class="n">06</span>Coding agent</a>
+    <a href="#leave"><span class="n">07</span>Leave-behinds</a>
   </nav>
 
   <header class="hero">
@@ -1097,9 +1135,38 @@
 
     <hr class="divider">
 
+    <!-- ============ CODING AGENT ============ -->
+    <section id="minimal">
+      <h2><span class="num">06</span>Build a coding agent with five tools</h2>
+      <p>My mini coding agent in <code>mini_coding_agent/agent.py</code> is a ReAct loop. The model can only act
+        through the tools I hand it, and a coding agent needs very few of them:</p>
+      <ul class="building-blocks">
+        <li><b>List</b><span>See what files are in the working folder.</span></li>
+        <li><b>Read</b><span>Load a file's contents into the conversation.</span></li>
+        <li><b>Write</b><span>Create a new file or overwrite an existing one.</span></li>
+        <li><b>Edit</b><span>Replace one piece of an existing file, so the model doesn't rewrite the whole thing.</span></li>
+      </ul>
+      <div class="bash-card">
+        <span class="bash-kicker">The only tool we really need</span>
+        <b>Bash</b>
+        <p>Every other tool is a shell command in disguise. <code>ls</code> lists, <code>cat</code> reads,
+          <code>&gt;</code> writes and <code>sed</code> edits. Give the model a shell in the working folder and it
+          can do everything a coding agent does. The named tools just make each action easier to see in the logs.</p>
+      </div>
+      <div class="card note">
+        <span class="tag">Takeaway</span>
+        <p style="margin:0">The model only ever asks for a tool call. My code runs it, returns the result, and the loop
+          continues until the model has an answer.</p>
+      </div>
+      <p class="muted">The repo version currently has write, edit, read and a shell <code>run</code> tool. It has no
+        separate list tool, because <code>ls</code> through the shell covers that.</p>
+    </section>
+
+    <hr class="divider">
+
     <!-- ============ LEAVE-BEHINDS ============ -->
     <section id="leave">
-      <h2><span class="num">06</span>Leave-behinds</h2>
+      <h2><span class="num">07</span>Leave-behinds</h2>
       <p>Everything tonight is in the repo — the HTML pages, the notes, links to the explainer videos, and my mini
         coding-agent for you to fork and build on.</p>
       <a class="repo-btn" href="https://github.com/Python-Test-Engineer/BrightonDevAI-meetup-nov-2026" target="_blank"
