@@ -83,6 +83,7 @@
       font-weight: 600;
       color: var(--clay-strong);
       margin-right: 18px;
+      padding: 0;
       white-space: nowrap;
     }
 
@@ -265,6 +266,21 @@
     .card.note {
       background: linear-gradient(180deg, #fbf7f2, #f7efe8);
       border-color: var(--clay-soft);
+    }
+
+    .mouse-warning {
+      border-left: 6px solid var(--clay);
+    }
+
+    .mouse-warning h3 {
+      margin-top: 0;
+    }
+
+    .card.note.mouse-warning .tag {
+      display: block;
+      font-size: 28px;
+      text-align: center;
+      margin-bottom: 18px;
     }
 
     .card.note .tag {
@@ -881,11 +897,11 @@
   </style>
 </head>
 
-<body>
+<body id="top">
   <a class="skip-link" href="#pitch">Skip to the learning notes</a>
 
   <nav class="top" aria-label="Talk sections">
-    <span class="brand">BrightonDev.ai</span>
+    <a class="brand" href="#top">BrightonDev.ai</a>
     <a href="#pitch"><span class="n">01</span>Pitch</a>
     <a href="#moment"><span class="n">02</span>Moment</a>
     <a href="#blocks"><span class="n">03</span>Building blocks</a>
@@ -899,11 +915,11 @@
     <span class="eyebrow">BrightonDev.ai Meetup</span>
     <h1>AI Agents<br><span class="grad">Demystified</span> and Simplified</h1>
     <p class="sub">A BrightonDev.ai Meetup talk by <span class="author"><b>Craig West</b></span></p>
-    <div class="learning-path" aria-label="What you will learn">
+    <!-- <div class="learning-path" aria-label="What you will learn">
       <div><b>01 · See it</b><span>One familiar API request</span></div>
       <div><b>02 · Trace it</b><span>Follow the tool loop</span></div>
       <div><b>03 · Build it</b><span>Reuse the harness pattern</span></div>
-    </div>
+    </div> -->
     <div class="hero-resources">
       <figure class="fig-qr">
         <img src="./qr.png" alt="QR code linking to the GitHub repo">
@@ -914,21 +930,43 @@
       </a>
     </div>
   </header>
-
+  <br><br>
   <main class="wrap">
+
+    <aside class="card note mouse-warning" role="note" aria-label="Warning: upside-down mouse perspective">
+      <span class="tag">⚠️ Warning</span>
+      <h3>The upside-down mouse</h3>
+      <p>After giving this talk many times, the point I most want you to keep in mind is this: agentic work is no more
+        difficult than the work we already do. It is a 180-degree paradigm shift in how we think about who is in
+        charge.</p>
+      <p>Think of an upside-down computer mouse. It feels disorienting at first, but the movements are still familiar —
+        left, right, up, down — just reversed. Agentic AI is similar: requests, responses, context, functions and loops
+        are familiar. We are changing how we think about directing the work.</p>
+      <div class="img-row">
+        <figure><img src="./images/mouse-up.jpg" alt="Computer mouse the right way up"></figure>
+        <figure><img src="./images/mouse-down.jpg" alt="The same computer mouse turned upside down"></figure>
+      </div>
+    </aside>
 
     <!-- ============ PITCH ============ -->
     <section id="pitch">
       <h2><span class="num">01</span>The one-line pitch</h2>
-      <p><strong>AI Agents are just code making a REST API call</strong> — admittedly, a very magical API. Pull away the
+      <p><strong>AI Agents are at its core just code making a REST API call</strong> — admittedly, a very magical API.
+        Pull away the
         hype and an agent is a <code>fetch</code> (a POST request with a JSON payload) wrapped in a loop, with some
         history and some tools bolted on.</p>
       <p>That's it.</p>
       <p>This whole talk is about demystifying and simplifying AI agents.</p>
+      <figure class="fig-api">
+        <img src="./01-REST-API.png" alt="A fetch to the API with a payload">
+      </figure>
+
       <h3>What is an AI agent or harness?</h3>
       <p>An AI agent is an LLM with tools in a loop: the model can ask your code to run a function, then use the result
         to keep working toward a goal.</p>
-      <p>A harness adds context and memory around that loop — the parts that help it work reliably on a real task.</p>
+      <p>AGENT = LLM + HARNESS</p>
+      <p>A harness adds a variety of features to the basic LLM, such as context management, memory, and tool integration
+        as well as guardrails, sandboxing and learnings.</p>
       <p><em>We will explore these concepts in detail throughout the talk.</em></p>
 
       <div class="agent-flow" role="img"
@@ -943,9 +981,9 @@
       </div>
       <p class="flow-loop">Return tool results to the model. <br>Repeat until it gives a final answer.</p>
 
-      <figure class="fig-api">
+      <!-- <figure class="fig-api">
         <img src="./01-REST-API.png" alt="A fetch to the API with a payload">
-      </figure>
+      </figure> -->
 
       <div class="card note">
         <span class="tag">The image of the night</span>
@@ -995,17 +1033,6 @@
       </ol>
       <p>As one audience member once put it: “This is very underwhelming.”</p>
       <p>I took it as a compliment.</p>
-
-      <h3>The upside-down mouse</h3>
-      <p>Here's the image I keep coming back to. Picture an upside-down computer mouse. When you pick one up the wrong
-        way round, it's disorienting — but it's the <em>same</em> set of movements. Left, right, up, down. Just
-        reversed. It takes a while to retrain your hand, but you already know how to do the motions.</p>
-      <div class="img-row">
-        <figure><img src="./images/mouse-up.jpg" alt="Mouse the right way up"></figure>
-        <figure><img src="./images/mouse-down.jpg" alt="Upside-down mouse"></figure>
-      </div>
-      <p>Agentic AI is the upside-down mouse. The concepts are familiar — request, response, context, functions, loops.
-        We've just got to flip how we think about who's in charge.</p>
     </section>
 
     <hr class="divider">
@@ -1169,17 +1196,17 @@
         around it:</p>
       <ul class="building-blocks">
         <li><b>Understand the repository</b><span>Search files, inspect Git status, map the project, and load local
-          instructions such as <code>AGENTS.md</code> before changing code.</span></li>
+            instructions such as <code>AGENTS.md</code> before changing code.</span></li>
         <li><b>Review and recover changes</b><span>Show diffs, checkpoint edits, support undo, and use branches or
-          worktrees so experiments don't overwrite a developer's work.</span></li>
+            worktrees so experiments don't overwrite a developer's work.</span></li>
         <li><b>Verify the result</b><span>Run focused tests, linters, and type checks; read failures and iterate until
-          the requested checks pass.</span></li>
+            the requested checks pass.</span></li>
         <li><b>Set safety boundaries</b><span>Confine file access to the workspace, sandbox commands, protect secrets,
-          and ask before risky or destructive actions.</span></li>
+            and ask before risky or destructive actions.</span></li>
         <li><b>Manage long tasks and context</b><span>Track a plan, retrieve relevant code, summarize old conversation,
-          and save enough state to resume interrupted work.</span></li>
+            and save enough state to resume interrupted work.</span></li>
         <li><b>Make runs dependable</b><span>Stream progress, handle timeouts and API errors, support cancellation, and
-          keep clear logs plus step and token budgets.</span></li>
+            keep clear logs plus step and token budgets.</span></li>
       </ul>
       <p class="muted">These features don't change the basic loop. They make it safer, easier to inspect, and more
         reliable on real repositories.</p>
