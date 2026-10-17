@@ -1163,6 +1163,26 @@
       </div>
       <p class="muted">The repo version currently has write, edit, read and a shell <code>run</code> tool. It has no
         separate list tool, because <code>ls</code> through the shell covers that.</p>
+
+      <h3>What would make it a fuller coding-agent harness?</h3>
+      <p>The core loop is here. To approach the capabilities of mature coding agents, I would add the engineering
+        around it:</p>
+      <ul class="building-blocks">
+        <li><b>Understand the repository</b><span>Search files, inspect Git status, map the project, and load local
+          instructions such as <code>AGENTS.md</code> before changing code.</span></li>
+        <li><b>Review and recover changes</b><span>Show diffs, checkpoint edits, support undo, and use branches or
+          worktrees so experiments don't overwrite a developer's work.</span></li>
+        <li><b>Verify the result</b><span>Run focused tests, linters, and type checks; read failures and iterate until
+          the requested checks pass.</span></li>
+        <li><b>Set safety boundaries</b><span>Confine file access to the workspace, sandbox commands, protect secrets,
+          and ask before risky or destructive actions.</span></li>
+        <li><b>Manage long tasks and context</b><span>Track a plan, retrieve relevant code, summarize old conversation,
+          and save enough state to resume interrupted work.</span></li>
+        <li><b>Make runs dependable</b><span>Stream progress, handle timeouts and API errors, support cancellation, and
+          keep clear logs plus step and token budgets.</span></li>
+      </ul>
+      <p class="muted">These features don't change the basic loop. They make it safer, easier to inspect, and more
+        reliable on real repositories.</p>
     </section>
 
     <hr class="divider">
