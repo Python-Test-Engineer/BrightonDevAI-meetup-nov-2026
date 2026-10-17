@@ -563,12 +563,291 @@
       font-style: italic;
       padding: 0 40px;
     }
+
+    /* ---------- teaching-first hierarchy ---------- */
+    body {
+      font-size: clamp(20px, 1.55vw, 24px);
+    }
+
+    .skip-link {
+      position: fixed;
+      top: 12px;
+      left: 12px;
+      z-index: 1200;
+      transform: translateY(-160%);
+      padding: 10px 16px;
+      border-radius: 8px;
+      background: var(--ink);
+      color: white;
+    }
+
+    .skip-link:focus {
+      transform: translateY(0);
+    }
+
+    header.hero {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 112px 32px 0;
+    }
+
+    .hero h1 {
+      margin-bottom: 18px;
+      font-size: clamp(58px, 6.5vw, 86px);
+    }
+
+    .hero-resources {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 28px;
+      max-width: 640px;
+      margin: 14px auto 0;
+      text-align: left;
+    }
+
+    .hero-resources .repo-btn {
+      max-width: 360px;
+      margin: 0;
+    }
+
+    .eyebrow {
+      font-size: 17px;
+      letter-spacing: 1.6px;
+      padding: 8px 18px;
+      margin-bottom: 26px;
+    }
+
+    .hero .sub {
+      font-size: clamp(23px, 2.2vw, 29px);
+    }
+
+    .learning-path {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      max-width: 900px;
+      margin: 24px auto 18px;
+      text-align: left;
+    }
+
+    .learning-path div {
+      padding: 12px 16px;
+      border-top: 2px solid var(--clay);
+      background: rgba(255, 255, 255, .68);
+    }
+
+    .learning-path b,
+    .learning-path span {
+      display: block;
+    }
+
+    .learning-path b {
+      font-family: var(--mono);
+      color: var(--clay-strong);
+      font-size: 15px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .learning-path span {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.4;
+    }
+
+    .hero .fig-qr {
+      margin: 0;
+    }
+
+    .hero .fig-qr img {
+      width: 160px;
+    }
+
+    .repo-btn {
+      max-width: 100%;
+      overflow-wrap: anywhere;
+      font-size: 18px;
+    }
+
+    .wrap {
+      max-width: 1160px;
+    }
+
+    section {
+      scroll-margin-top: 82px;
+    }
+
+    section > p,
+    section > ol,
+    section > ul,
+    section > h3 {
+      max-width: 980px;
+    }
+
+    h2 {
+      max-width: 1000px;
+      text-wrap: balance;
+    }
+
+    #engineering h2 {
+      font-size: clamp(34px, 4vw, 48px);
+    }
+
+    .agent-flow {
+      display: grid;
+      grid-template-columns: 1fr auto 1.2fr auto 1.2fr auto 1.2fr;
+      align-items: stretch;
+      gap: 12px;
+      margin: 32px 0 18px;
+      padding: 24px;
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius);
+      background: #f4f0e8;
+    }
+
+    .agent-flow .node {
+      min-width: 0;
+      padding: 18px 16px;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+    }
+
+    .agent-flow .node b,
+    .agent-flow .node span {
+      display: block;
+    }
+
+    .agent-flow .node b {
+      color: var(--clay-strong);
+      font-family: var(--mono);
+      font-size: 15px;
+      letter-spacing: .8px;
+      text-transform: uppercase;
+    }
+
+    .agent-flow .node span {
+      margin-top: 7px;
+      font-size: 18px;
+      line-height: 1.4;
+    }
+
+    .agent-flow .arrow {
+      align-self: center;
+      color: var(--clay);
+      font-size: 28px;
+      font-weight: 700;
+    }
+
+    .flow-loop {
+      margin: 0 0 28px;
+      padding: 12px 18px;
+      text-align: center;
+      color: var(--clay-strong);
+      background: var(--clay-soft);
+      border-radius: 8px;
+      font-family: var(--mono);
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .building-blocks {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      counter-reset: concept;
+    }
+
+    .building-blocks li {
+      position: relative;
+      min-height: 128px;
+      margin: 0;
+      padding: 24px 24px 22px 70px;
+      line-height: 1.5;
+    }
+
+    .building-blocks li::before {
+      counter-increment: concept;
+      content: "0" counter(concept);
+      position: absolute;
+      left: 22px;
+      top: 25px;
+      color: var(--rust);
+      font: 600 15px var(--mono);
+    }
+
+    .building-blocks li b {
+      display: block;
+      margin-bottom: 5px;
+      font-family: var(--serif);
+      font-size: 25px;
+    }
+
+    .demos {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+      align-items: start;
+    }
+
+    .demo {
+      height: 100%;
+      padding: 26px;
+      margin: 0;
+      box-shadow: 0 3px 14px rgba(38, 38, 37, .045);
+    }
+
+    .demo .step {
+      font-size: 14px;
+      letter-spacing: .7px;
+    }
+
+    .demo h4 {
+      font-size: 30px;
+    }
+
+    .demo p {
+      font-size: 19px;
+      line-height: 1.55;
+    }
+
+    .demo .card.note {
+      padding: 20px;
+    }
+
+    .demo figure {
+      margin: 22px 0 0;
+    }
+
+    .demo figure img {
+      width: 100%;
+    }
+
+    .card.quote {
+      font-size: 22px;
+    }
+
+    .divider {
+      margin: 64px auto;
+    }
+
+    a:focus-visible,
+    button:focus-visible {
+      outline: 3px solid var(--clay);
+      outline-offset: 3px;
+    }
+
+
+
+
   </style>
 </head>
 
 <body>
+  <a class="skip-link" href="#pitch">Skip to the learning notes</a>
 
-  <nav class="top">
+  <nav class="top" aria-label="Talk sections">
     <span class="brand">BrightonDev.ai</span>
     <a href="#pitch"><span class="n">01</span>Pitch</a>
     <a href="#moment"><span class="n">02</span>Moment</a>
@@ -582,17 +861,20 @@
     <span class="eyebrow">BrightonDev.ai Meetup</span>
     <h1>AI Agents<br><span class="grad">Demystified</span> and Simplified</h1>
     <p class="sub">A BrightonDev.ai Meetup talk by <span class="author"><b>Craig West</b></span></p>
-    <p class="author">All code, slides and more in the repo below.</p>
-    <figure class="fig-qr">
-      <img src="./qr.png" alt="QR code linking to the GitHub repo">
-    </figure>
-
-    <p>
+    <div class="learning-path" aria-label="What you will learn">
+      <div><b>01 · See it</b><span>One familiar API request</span></div>
+      <div><b>02 · Trace it</b><span>Follow the tool loop</span></div>
+      <div><b>03 · Build it</b><span>Reuse the harness pattern</span></div>
+    </div>
+    <div class="hero-resources">
+      <figure class="fig-qr">
+        <img src="./qr.png" alt="QR code linking to the GitHub repo">
+      </figure>
       <a class="repo-btn" href="https://github.com/Python-Test-Engineer/BrightonDevAI-meetup-nov-2026" target="_blank"
         rel="noopener">
-        github.com/Python-Test-Engineer/BrightonDevAI-meetup-nov-2026
+        Open the code, slides &amp; examples
       </a>
-    </p>
+    </div>
   </header>
 
   <main class="wrap">
@@ -605,11 +887,22 @@
         history and some tools bolted on.</p>
       <p>That's it.</p>
       <p>This whole talk is about demystifying and simplifying AI agents.</p>
-      <h3>What is an AI agent/Harness?</h3>
-      <p>An AI Agent is an LLM with tools, (a set of functions the LLM can ask for us to run and send back result) in a
-        loop to acheive a goal.</p>
-      <p>A harness is an LLM with tools, context, and memory in a loop to acheive a goal.</p>
+      <h3>What is an AI agent or harness?</h3>
+      <p>An AI agent is an LLM with tools in a loop: the model can ask your code to run a function, then use the result
+        to keep working toward a goal.</p>
+      <p>A harness adds context and memory around that loop — the parts that help it work reliably on a real task.</p>
       <p><em>We will explore these concepts in detail throughout the talk.</em></p>
+
+      <div class="agent-flow" role="img" aria-label="The user asks a question, the harness sends it to the model, the model may request a tool, and the harness runs that tool and returns its result to the model.">
+        <div class="node"><b>You</b><span>Ask a question</span></div>
+        <span class="arrow" aria-hidden="true">→</span>
+        <div class="node"><b>Harness</b><span>Sends the request</span></div>
+        <span class="arrow" aria-hidden="true">→</span>
+        <div class="node"><b>Model</b><span>Answers or requests a tool</span></div>
+        <span class="arrow" aria-hidden="true">→</span>
+        <div class="node"><b>Your code</b><span>If requested, runs the tool and returns its result</span></div>
+      </div>
+      <p class="flow-loop">Return tool results to the model; repeat until it gives a final answer.</p>
 
       <figure class="fig-api">
         <img src="./01-REST-API.png" alt="A fetch to the API with a payload">
@@ -626,7 +919,7 @@
       <p>My goal tonight is not to teach you a framework. It's to <strong>demystify and simplify</strong> — to show you
         the patterns and the structure, not the library details — so that when you go home you can build your own agent,
         or plug agents into the workflows you already have. Business as usual.</p>
-      <br><br><br><br><br><br><br><br>
+
       <div class="card quote">
         <p style="margin:0">I'm Craig West — one of you, a developer — and when
           I'm not wrestling with agents you'll find me walking a Fox Red Labrador (Leo) and a Cockapoo (Pip).</p>
@@ -645,7 +938,7 @@
         </p>
       </div>
     </section>
-    <br><br><br><br><br><br><br><br>
+
     <hr class="divider">
 
     <!-- ============ MOMENT ============ -->
@@ -661,7 +954,7 @@
         <li><strong>Autonomy.</strong> The LLM decides the flow. The model chooses what to do next, not us, within
           certain constraints.</li>
       </ol>
-      <p>As a talk member once said "This is very underwhelming." </p>
+      <p>As one audience member once put it: “This is very underwhelming.”</p>
       <p>I took it as a compliment.</p>
 
       <h3>The upside-down mouse</h3>
@@ -677,18 +970,16 @@
     </section>
 
     <hr class="divider">
-    <br><br><br><br><br><br><br><br>
+
     <!-- ============ BUILDING BLOCKS ============ -->
     <section id="blocks">
       <h2><span class="num">03</span>History · Context · Looping · Tools</h2>
       <p>I keep four words pinned to the front of my mind, because every agent, however fancy, is built from them:</p>
       <ul class="building-blocks">
-        <li><b>Looping</b> — repeat the call until the model decides it has a final answer.</li>
-        <li><b>Context</b> — give it the facts it needs, either statically or fetched dynamically.</li>
-        <li><b>Tools</b> — runtime functions it can reach for when it needs to do something or get more information.
-        <li><b>History</b> — the model is stateless at its core, so we give it memory by feeding back previous
-          exchanges.</li>
-        </li>
+        <li><b>Looping</b><span>Repeat the call until the model decides it has a final answer.</span></li>
+        <li><b>Context</b><span>Give it the facts it needs, either statically or fetched dynamically.</span></li>
+        <li><b>Tools</b><span>Runtime functions it can reach for to do something or get more information.</span></li>
+        <li><b>History</b><span>The model is stateless at its core, so feed previous exchanges back to it.</span></li>
       </ul>
       <p>Everything below is just one of these four ideas wearing a different coat.</p>
 
@@ -696,14 +987,13 @@
       <p>For me the cleanest mental model is the <code>function</code> frame:</p>
       <pre>input -&gt; function(input) -&gt; output -&gt; function(output) -&gt; output2</pre>
       <figure class="fig-wide">
-        <img src="./images/  <figure class=" fig-wide">
         <img src="./images/100_INPUT_OUTPUT.png"
           alt="Reflection pattern — the output of one agent becomes the input of the next">
-      </figure>
+        <figcaption>One agent's output becomes the next step's input.</figcaption>
       </figure>
 
     </section>
-    <br><br><br><br><br><br><br><br>
+
     <hr class="divider">
 
     <!-- ============ DEMOS ============ -->
